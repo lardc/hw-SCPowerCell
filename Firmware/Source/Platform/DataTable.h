@@ -69,6 +69,7 @@ void DT_ResetNVPart(FUNC_SetDefaultValues SetFunc);
 void DT_ResetWRPart(FUNC_SetDefaultValues SetFunc);
 // Save firmware information to data table
 void DT_SaveFirmwareInfo(Int16U SlaveNID, Int16U MasterNID);
+void DT_ResetNVPartToDefault(void);
 
 
 #endif // __DATA_TABLE_H

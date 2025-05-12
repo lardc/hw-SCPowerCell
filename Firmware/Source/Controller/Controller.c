@@ -133,6 +133,12 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
         break;
       }
 
+    case ACT_DT_RESET_TO_DEFAULT:
+      {
+        DT_ResetNVPartToDefault();
+        break;
+      }
+
     case ACT_SC_PULSE_START:
       {
         if(CheckDeviceState(DS_PulseConfigReady))

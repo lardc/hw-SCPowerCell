@@ -5,10 +5,9 @@
 //#define DEBUG_MODE
 #define DEBUG_CURRENT_VALUE                     300                             //Значение ударного тока в отладочном режиме, [А]
 
-
 //ACTIONS
 //
-#define ACT_DS_NONE                             1                               //Переход в состояние ожидания
+#define ACT_DS_NONE						1                               //Переход в состояние ожидания
 #define ACT_BAT_START_CHARGE                    2                               //Команда блоку SCPowerCell на заряд батареи конденсаторов
 #define ACT_FAULT_CLEAR                         3                               //Очистка fault
 #define ACT_WARNING_CLEAR                       4                               //Очистка warning
@@ -21,7 +20,7 @@
 //-----------
 #define ACT_SAVE_DT_TO_FLASH                    200                             //Сохранение пользовательских данных во FLASH процессора
 #define ACT_RESTORE_DT_FROM_FLASH               201                             //Восстановление данных из FLASH
-#define ACT_RESET_TO_DEFAULT					202	// Сброс DataTable в состояние по умолчанию                 202                             //Сброс DataTable в состояние по умолчанию
+#define ACT_DT_RESET_TO_DEFAULT                 202                             //Сброс DataTable в состояние по умолчанию
 #define ACT_FLASH_CLEAR                         203                             //Очистка пользовательской FLASH памяти
 //
 

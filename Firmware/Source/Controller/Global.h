@@ -62,8 +62,6 @@
 //-----------------------------------------------
 //
 
-#define	BCCIM_TIMEOUT_TICKS			50				// Таймаут протоколоа мастер BCCI (в мс)
-
 //Переменные
 extern uint8_t Node;
 extern bool Timeout_1S;

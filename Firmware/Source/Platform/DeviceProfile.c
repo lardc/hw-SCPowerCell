@@ -53,7 +53,6 @@ static Boolean *MaskChangesFlag;
 
 // Forward functions
 //
-static Boolean DEVPROFILE_Validate32(Int16U Address, Int32U Data);
 static Boolean DEVPROFILE_Validate16(Int16U Address, Int16U Data);
 static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError);
 static void DEVPROFILE_FillWRPartDefault();
@@ -103,7 +102,6 @@ void DEVPROFILE_ProcessRequests()
   BCCI_Process(&DEVICE_CAN_Interface, *MaskChangesFlag);
 }
 // ----------------------------------------
-
 
 void DEVPROFILE_ResetControlSection()
 {
@@ -155,28 +153,10 @@ static Boolean DEVPROFILE_Validate16(Int16U Address, Int16U Data)
 }
 // ----------------------------------------
 
-static Boolean DEVPROFILE_Validate32(Int16U Address, Int32U Data)
-{
-	if(ENABLE_LOCKING && !UnlockedForNVWrite && (Address < DATA_TABLE_WR_START))
-		return FALSE;
-
-	return TRUE;
-}
-// ----------------------------------------
-
 static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 {
 	switch(ActionID)
 	{
-		case ACT_RESET_TO_DEFAULT:
-				{
-					if(ENABLE_LOCKING && !UnlockedForNVWrite)
-						*UserError = ERR_WRONG_PWD;
-					else
-						DT_ResetNVPart(&DEVPROFILE_FillWRPartDefault);
-				}
-				break;
-
 		default:
 			return (ControllerDispatchFunction) ? ControllerDispatchFunction(ActionID, UserError) : FALSE;
 	}
@@ -207,7 +187,7 @@ void DEVPROFILE_InitEPService(pInt16U Indexes, pInt16U Sizes, pInt16U *Counters,
 }
 // ----------------------------------------
 
-static Int16U DEVPROFILE_CallbackReadX(Int16U Endpoint, pInt16U *Buffer, Boolean Streamed,
+Int16U DEVPROFILE_CallbackReadX(Int16U Endpoint, pInt16U *Buffer, Boolean Streamed,
 									   Boolean RepeatLastTransmission, void *EPStateAddress, Int16U MaxNonStreamSize)
 {
 	Int16U pLen;
@@ -296,7 +276,7 @@ void DEVPROFILE_InitEPWriteService(pInt16U Indexes, pInt16U Sizes, pInt16U *Coun
 }
 // ----------------------------------------
 
-static Boolean DEVPROFILE_CallbackWriteX(Int16U Endpoint, pInt16U Buffer, Boolean Streamed, Int16U Length, void *EPStateAddress)
+Boolean DEVPROFILE_CallbackWriteX(Int16U Endpoint, pInt16U Buffer, Boolean Streamed, Int16U Length, void *EPStateAddress)
 {
   pEPState epState;
   pEPStates epStates = (pEPStates)EPStateAddress;

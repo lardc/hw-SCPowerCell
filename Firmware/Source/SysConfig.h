@@ -20,6 +20,7 @@
 #define USART_BOUDRATE                          115200                          //Скорость USART
 #define USART_FIFOlen                           32                              //Длина FIFO USART
 #define	SCCI_TIMEOUT_TICKS  		        1000
+#define	BCCIM_TIMEOUT_TICKS				50										// Таймаут протоколоа мастер BCCI (в мс)
 //
 
 //Периоды таймеров, мкС
