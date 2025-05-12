@@ -21,18 +21,18 @@
 <booleanAttribute key="com.atollic.hardwaredebug.stlink.enable_external_loader" value="false"/>
 <booleanAttribute key="com.atollic.hardwaredebug.stlink.enable_logging" value="false"/>
 <stringAttribute key="com.atollic.hardwaredebug.stlink.external_loader" value=""/>
-<stringAttribute key="com.atollic.hardwaredebug.stlink.log_file" value="D:\proton\Test equipment\Turn On Unit\Controller soft\Version 1.1\TOCUHPControlBoard\Debug\st-link_gdbserver_log.txt"/>
+<stringAttribute key="com.atollic.hardwaredebug.stlink.log_file" value="D:\proton\Test equipment\Turn On Unit\Controller soft\Version 1.1\SCPowerCell\Debug\st-link_gdbserver_log.txt"/>
 <booleanAttribute key="com.atollic.hardwaredebug.stlink.stlink_check_serial_number" value="false"/>
 <stringAttribute key="com.atollic.hardwaredebug.stlink.stlink_txt_serial_number" value=""/>
 <stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="${TOOLCHAIN_PATH}/arm-atollic-eabi-gdb"/>
 <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_REGISTER_GROUPS" value=""/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Release/TOCUHPControlBoard.elf"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="TOCUHPControlBoard"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Release/SCPowerCell.elf"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="SCPowerCell"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/TOCUHPControlBoard"/>
+<listEntry value="/SCPowerCell"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
