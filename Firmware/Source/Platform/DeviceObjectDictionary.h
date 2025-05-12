@@ -1,107 +1,106 @@
 ﻿#ifndef __DEV_OBJ_DIC_H
 #define __DEV_OBJ_DIC_H
 
-// Команды
-#define ACT_ENABLE_POWER				1	// Переход в состояние ожидания
-#define ACT_DISABLE_POWER				2	// Отключение блока
-#define ACT_FAULT_CLEAR					3	// Очистка fault
-#define ACT_WARNING_CLEAR				4	// Очистка warning
+//Debug mode
+//#define DEBUG_MODE
+#define DEBUG_CURRENT_VALUE                     300                             //Значение ударного тока в отладочном режиме, [А]
 
-#define ACT_DBG_FAN						10	// Импульсное включение вентилятора
-#define ACT_DBG_DISCHARGE				11	// Импульсное включение реле разряда конденстаторов
-#define ACT_DBG_EXT_LED					12	// Импульсное включение внешней индикации
-#define ACT_DBG_MW_RELAY				13	// Импульсное включение реле питания БП MeanWell
-#define ACT_DBG_PSBOARD_OUTPUT			14	// Импульсное включение сигнала для PSBOARD
-#define ACT_DBG_GATE_CONTROL			15	// Запись значения в сдвиговый регистр управления затворами
-#define ACT_DBG_GATE_EN					16	// Включение силовых транзисторов
 
-#define ACT_VOLTAGE_CONFIG				100	// Конфигурация напряжения и настройка затворов транзисторов
-#define ACT_PULSE_CONFIG				101	// Выключить PsBoard перед подачей импульса
-#define ACT_SW_PULSE					102	// Программный запуск импульса тока
-
-#define ACT_SAVE_TO_ROM					200	// Сохранение пользовательских данных во FLASH процессора
-#define ACT_RESTORE_FROM_ROM			201	// Восстановление данных из FLASH
-#define ACT_RESET_TO_DEFAULT			202	// Сброс DataTable в состояние по умолчанию
-
-#define ACT_BOOT_LOADER_REQUEST			320	// Перезапуск процессора с целью перепрограммирования
-
-#define ACT_JSON_INIT_READ				341	// Инициализация начала считывания JSON
-#define ACT_JSON_TO_EP					342	// Выполнить чтение шаблона JSON в EP
-// -----------------------------
-
-// Регистры
-// Сохраняемые регистры
-// 0 -1
-#define REG_VOLTAGE_HYST				2	// Гистерезис регулирования напряжения (в % / 10)
-#define REG_BAT_CHARGE_TIMEOUT			3	// Таймаут выхода батареи на заданное напряжение (в мс)
-#define REG_FAN_OPERATE_TIME			4	// Время работы вентилятора после импульса (в с)
-#define REG_FAN_OPERATE_PERIOD			5	// В простое вентилятор включается не реже чем (в с)
-#define REG_PS_BOARD_DISABLE_TIMEOUT	6	// Таймаут дозаряда после импульса, мс
-#define REG_RESISTANCE_PER_LSB			7	// Сопротивление наименьшего значащего разряда (в Ом * 100)
-#define REG_MAX_CURRENT_PER_BIT			8	// Максимальный ток на 1 бит (в А)
-#define REG_SYNC_WAIT_TIMEOUT			9	// Таймаут ожидания импульса синхронизации, мс
-#define REG_AFTER_PULSE_TIMEOUT			10	// Таймаут после импульса, мс
-#define REG_GATE_RESOLUTION				11	// Разрешение регистра драйверов затворов
+//ACTIONS
 //
-#define REG_V_BAT_OFFSET				20	// Смещение оцифрованного напряжения батареи 1 (в тиках)
-#define REG_V_BAT_K						21	// Коэффициент пересчёта напряжения АЦП (в мВ) в напряжение батареи (в В) x1000
-#define REG_V_BAT_P2					22	// Калибровочный коэффициент P2 измерения напряжения батареи
-#define REG_V_BAT_P1					23	// Калибровочный коэффициент P1 измерения напряжения батареи
-#define REG_V_BAT_P0					24	// Калибровочный коэффициент P0 измерения напряжения батареи
-// 25 - 29
-#define REG_USE_OUT_VOLTAGE_MONITOR		32	// Включение мониторинга напряжения
-// 31 - 59
-#define REG_CFG_NODE_ID					60	// Настройка CAN NodeID
-
-// Несохраняемы регистры чтения-записи
-#define REG_VOLTAGE_SETPOINT			128	// Значение задания напряжения (в В)
-#define REG_GATE_REGISTER				129	// Значение-маска конфигурации затворов
+#define ACT_DS_NONE                             1                               //Переход в состояние ожидания
+#define ACT_BAT_START_CHARGE                    2                               //Команда блоку SCPowerCell на заряд батареи конденсаторов
+#define ACT_FAULT_CLEAR                         3                               //Очистка fault
+#define ACT_WARNING_CLEAR                       4                               //Очистка warning
+#define ACT_RESET_DEVICE                        5                               //Перезапуск процессора
+//-----------
+#define ACT_SC_PULSE_CONFIG                     100                             //Команда блоку SCPowerCell на конфигурацию значения ударного тока
+#define ACT_SC_PULSE_START                      101                             //Запуск формирования импульса ударного тока
+//-----------
+#define ACT_RESET_FOR_PROGRAMMING               320                             //Перезапуск процессора с целью перепрограммирования
+//-----------
+#define ACT_SAVE_DT_TO_FLASH                    200                             //Сохранение пользовательских данных во FLASH процессора
+#define ACT_RESTORE_DT_FROM_FLASH               201                             //Восстановление данных из FLASH
+#define ACT_RESET_TO_DEFAULT					202	// Сброс DataTable в состояние по умолчанию                 202                             //Сброс DataTable в состояние по умолчанию
+#define ACT_FLASH_CLEAR                         203                             //Очистка пользовательской FLASH памяти
 //
-#define REG_DBG							160	// Отладочный регистр
 
-// Регистры только чтение
-#define REG_DEV_STATE					192	// Регистр состояния
-#define REG_FAULT_REASON				193	// Регистр Fault
-#define REG_DISABLE_REASON				194	// Регистр Disable
-#define REG_WARNING						195	// Регистр Warning
-#define REG_PROBLEM						196	// Регистр Problem
-#define REG_OP_RESULT					197	// Регистр результата операции
-#define REG_DEV_SUBSTATE				198
+//REGISTERS
 //
-#define REG_ACTUAL_BAT_VOLTAGE			200	// Текущее напряжение на батарее (в В)
-// -----------------------------
-#define REG_FWINFO_SLAVE_NID			256	// Device CAN slave node ID
-#define REG_FWINFO_MASTER_NID			257	// Device CAN master node ID (if presented)
-// 258 - 259
-#define REG_FWINFO_STR_LEN				260	// Length of the information string record
-#define REG_FWINFO_STR_BEGIN			261	// Begining of the information string record
+//---------------
+#define REG_PULSE_OFFSET_VALUE                  0                               //Значение смещения сигнала импульса ударного тока (сигнал с ЦАПа)
+#define REG_REGULATOR_OFFSET_VALUE              1                               //Значение смещения сигнала регулятора
+#define REG_BAT_VOLTAGE_COEF                    2                               //Калибровочный коэффициент напряжения конденсаторной батареи
+#define REG_BAT_VOLTAGE_THRESHOLD               3                               //Порог заряда конденсаторной батареи
+#define REG_SC_SINE_PULSE_COEF                  4                               //Калибровочный коэффициент амплитуды полусинусоидального импульса ударного тока
+#define REG_SC_TRAP_PULSE_COEF                  5                               //Калибровочный коэффициент амплитуды трапецеидального импульса ударного тока
+#define REG_SINE_P_KOEF                         6                               //Пропорциональный коэффициент регулятора для синуса
+#define REG_SINE_I_KOEF                         7                               //Интегральный коэффициент регулятора для синуса
+#define REG_TOP_TRAP_P_KOEF                     8                               //Пропорциональный коэффициент регулятора для вершины трапеции
+#define REG_TOP_TRAP_I_KOEF                     9                               //Интегральный коэффициент регулятора для вершины трапеции
+#define REG_FRONT_TRAP_P_KOEF                   10                              //Пропорциональный коэффициент регулятора для фронта трапеции
+#define REG_FRONT_TRAP_I_KOEF                   11                              //Интегральный коэффициент регулятора для фронта трапеции
+//---------------
+#define REG_SC_PULSE_VALUE                      64                              //Значение амплитуды импульса ударного тока, Ампер
+#define REG_WAVEFORM_TYPE                       65                              //Задание формы ударного тока (полусинус/трапеция)
+#define REG_TRAPEZE_EDGE_TIME                   66                              //Время длительности фронта трапеции, мкС
+#define REG_TEST_REGULATOR                      67                              //1-блок в режиме тестирования регулятора, 0-нормальный режим
+#define REG_SCPC_VERSION                        95                              //Версия блока SCPC
+//---------------
+#define REG_BAT_VOLTAGE                         96                              //Напряжение на конденсаторной батарее, Вольт
+#define REG_DEV_STATE                           97                              //Статус работы блока
+#define REG_FAULT_REASON                        98
+#define REG_DISABLE_REASON                      99
+#define REG_WARNING                             100
+#define REG_PROBLEM                             101
+//---------------
+//
 
-// Operation results
-#define OPRESULT_NONE					0	// No information or not finished
-#define OPRESULT_OK						1	// Operation was successful
-#define OPRESULT_FAIL					2	// Operation failed
+// ENDPOINTS
+//
+#define EP16_Data_Pulse		                1	                        // Оцифрованные данные прямого напряжения
+#define EP_WRITE_COUNT		                1                               
+#define EP_COUNT			        1
+#define EP_SIZE                                 PULSE_BUFFER_SIZE
+//
 
-//  Fault and disable codes
-#define DF_NONE							0
-#define DF_BATTERY						1	// Проблема заряда батареи
 
-// Problem
-#define PROBLEM_NONE					0
-#define PROBLEM_SYNC_TOO_LONG			1	// Превышена длительность импульса синхронизации
-#define PROBLEM_GATE_REGISTER			2	// Некорректный код регистра затворов
-#define PROBLEM_SYNC_LINE				3	// Некорректное состояние линии синхронизации
+//Errors
+#define ERR_SYNC_TIMEOUT                        1                               //Превышено время нахождения линии SYNC в высоком состоянии
+#define ERR_WAVEFORM_TYPE                       2                               //Неправильное задание типа формы ударного тока
+#define ERR_SC_TRAPEZE_VALUE                    3                               //Превышено максимальное значение ударного тока при трапецеидальной форме
 
-//  Warning
-#define WARNING_NONE					0
+//Warnings
+#define WARNING_SC_CUT_OFF                      1                               //Значение ударного тока обрезано, т.к. превышает предел
 
-//  User Errors
-#define ERR_NONE						0
-#define ERR_CONFIGURATION_LOCKED		1	//  Устройство защищено от записи
-#define ERR_OPERATION_BLOCKED			2	//  Операция не может быть выполнена в текущем состоянии устройства
-#define ERR_DEVICE_NOT_READY			3	//  Устройство не готово для смены состояния
-#define ERR_WRONG_PWD					4	//  Неправильный ключ
+//User Errors
+#define ERR_NONE                                0 				// Ошибок нет
+#define ERR_CONFIGURATION_LOCKED                1 				// Устройство защищено от записи
+#define ERR_OPERATION_BLOCKED                   2 				// Операция не может быть выполнена в текущем состоянии устройства
+#define ERR_DEVICE_NOT_READY                    3 				// Устройство не готово для смены состояния
+#define ERR_WRONG_PWD                           4 				// Неправильный ключ
+//
 
-// EP
-#define EP16_ExtInfoData				20	// Diag data drom flash
+// Password to unlock non-volatile area for write
+//
+#define ENABLE_LOCKING				FALSE
+//
 
-#endif //  __DEV_OBJ_DIC_H
+
+//
+typedef enum __DeviceState
+{
+  DS_None                                       = 0,                            //Блок в неопределенном состоянии
+  DS_Fault                                      = 1,                            //Блок в состоянии Fault
+  DS_Disabled                                   = 2,                            //Блок в состоянии Disabled
+  DS_WaitTimeOut                                = 3,                            //Блок в ожидании таймаута между импульсами ударного тока
+  DS_BatteryChargeWait                          = 4,                            //Блок в состоянии ожидания заряда конденсаторной батареи
+  DS_Ready                                      = 5,                            //Блок в состоянии готовности
+  DS_PulseConfigReady                           = 6,                            //Блок в в сконфигурированном состоянии
+  DS_PulseStart                                 = 7,                            //Блок в состоянии формирования импульса ударного тока
+  DS_PulseEnd                                   = 8                             //Блок завершил формирование импульса тока  
+} DeviceState;
+//
+
+
+#endif // __DEV_OBJ_DIC_H

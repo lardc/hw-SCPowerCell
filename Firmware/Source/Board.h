@@ -2,7 +2,7 @@
 #define __BOARD_H
 
 #include "stm32f30x.h"
-
+/*
 #include "ZwRCC.h"
 #include "ZwGPIO.h"
 #include "ZwNCAN.h"
@@ -35,5 +35,5 @@ GPIO_PortPinSettingMacro GPIO_ALT_UART_TX	= {GPIOA, Pin_9};
 // Линия синхронизации
 GPIO_PortPinSettingMacro GPIO_SYNC			= {GPIOA, Pin_8};
 GPIO_PortPinSettingMacro GPIO_VOUT_STATE	= {GPIOB, Pin_15};
-
+*/
 #endif // __BOARD_H

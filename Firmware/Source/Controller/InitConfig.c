@@ -1,4 +1,4 @@
-﻿#include "InitConfig.h"
+﻿/*#include "InitConfig.h"
 #include "Board.h"
 #include "SysConfig.h"
 #include "BCCIxParams.h"
@@ -122,4 +122,4 @@ void INITCFG_ConfigCAN(Int16U NodeID)
 	NCAN_FilterInit(0, Mask, Mask);
 	NCAN_InterruptSetPriority(0);
 }
-//------------------------------------------------
+//------------------------------------------------*/

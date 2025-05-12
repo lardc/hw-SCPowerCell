@@ -5,7 +5,7 @@
 #include "stdinc.h"
 
 // Functions
-//
+/*
 void LL_ToggleBoardLED();
 void LL_Fan(bool State);
 void LL_BatteryDischarge(bool State);
@@ -23,5 +23,5 @@ bool LL_GetSYNCState();
 void LL_FlipSpiRCK();
 bool LL_IsOutputVoltageHigh();
 void LL_PulseSYNC();
-
+*/
 #endif //__LOWLEVEL_H

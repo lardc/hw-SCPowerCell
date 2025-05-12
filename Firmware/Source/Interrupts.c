@@ -1,4 +1,4 @@
-﻿// Include
+﻿/* Include
 #include "Interrupts.h"
 //
 #include "Controller.h"
@@ -116,4 +116,4 @@ void INT_SyncTimeoutControl(bool State)
 	State ? TIM_Start(TIM3) : TIM_Stop(TIM3);
 	TIM_Reset(TIM3);
 }
-//-----------------------------------------
+//-----------------------------------------*/

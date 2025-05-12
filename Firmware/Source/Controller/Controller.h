@@ -1,48 +1,42 @@
-﻿#ifndef __CONTROLLER_H
+﻿// -----------------------------------------
+// Logic controller
+// ----------------------------------------
+
+#ifndef __CONTROLLER_H
 #define __CONTROLLER_H
 
 // Include
 #include "stdinc.h"
+//
+#include "Global.h"
+#include "ZwNCAN.h"
+#include "BCCIMaster.h"
+#include "ZwDAC.h"
+#include "ZwIWDG.h"
+#include "ZwADC.h"
+#include "DeviceObjectDictionary.h"
+#include "SIN_PulseGenerator.h"
 
-// Types
-typedef enum __DeviceState
-{
-	DS_None 			= 0,
-	DS_Fault 			= 1,
-	DS_Disabled 		= 2,
-	DS_Ready 			= 3,
-	DS_BatteryCharge 	= 4
-} DeviceState;
 
-typedef enum __DeviceSubState
-{
-	SS_None 			= 0,
-	SS_WaitingSync 		= 1,
-	SS_StartPulse		= 2
-} DeviceSubState;
+// Переменные
+//
+extern Int64U CONTROL_TimeCounter;
+extern Int16U CONTROL_Values_Pulse[VALUES_x_SIZE];
+extern Int16U CONTROL_Values_Pulse_Counter;
+//
 
-// Variables
-extern volatile Int64U CONTROL_TimeCounter;
-extern Int64U CONTROL_LEDTimeout;
-extern Int64U CONTROL_RechargeTimeout;
-extern Int64U CONTROL_AfterPulseTimeout;
-extern Int64U CONTROL_SynchronizationTimeout;
-extern Int64U CONTROL_PsBoardDisableTimeout;
 
-extern Int16U CONTROL_ExtInfoCounter;
-extern Int16U CONTROL_ExtInfoData[];
-
-// Functions
-void CONTROL_Init();
-void CONTROL_Idle();
-void CONTROL_CurrentEmergencyStop(Int16U Reason);
-DeviceSubState CONTROL_GetSubState();
-void CONTROL_SetDeviceState(DeviceState NewState);
-void CONTROL_SetDeviceSubState(DeviceSubState NewSubState);
-void CONTROL_InitBatteryChargeProcess();
-void CONTROL_HandleFanLogic(bool IsImpulse);
-void CONTROL_HandleLEDLogic(bool IsImpulse);
-void CONTROL_FinishProcess();
-void CONTROL_SwitchToProblem(Int16U Reason);
+// Функции
+//
+void CONTROL_Init();                                                            //Инициализация контроллера
+void CONTROL_Idle();                                                            //Операции с низшим приоритетом
+void BatChargeProcess(void);                                                    //Контроль за напряжением на конденсаторах
+void DebugModeInit(void);                                                       //Инициализация контроллера в режиме Debug
+void Delay_mS(uint64_t Delay);                                                  //Функция формирования задержки, мС
+static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError);     //Обработка протокола SCCI/BSSI
+void IWDG_Control(void);                                                        //Контроль/сброс WatchDog
+void SetDeviceState(DeviceState NewState);                                      //Установка состояния блока
+bool CheckDeviceState(DeviceState NewState);                                    //Проверить состояние блока
+//
 
 #endif // __CONTROLLER_H

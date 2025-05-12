@@ -1,4 +1,4 @@
-﻿#include "Measurement.h"
+﻿/*#include "Measurement.h"
 #include "DataTable.h"
 #include "DeviceObjectDictionary.h"
 #include "Global.h"
@@ -22,4 +22,4 @@ uint16_t MEASURE_GetBatteryVoltage()
 	
 	return (V > 0) ? V : 0;
 }
-//------------------------------------------------
+//------------------------------------------------*/

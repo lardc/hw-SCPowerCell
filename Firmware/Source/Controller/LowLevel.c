@@ -1,4 +1,4 @@
-﻿// Header
+﻿/* Header
 #include "LowLevel.h"
 // Include
 #include "Board.h"
@@ -123,4 +123,4 @@ void LL_PulseSYNC()
 	DELAY_US(90);
 	LL_ForceSYNC(false);
 }
-//-----------------------------
+//-----------------------------*/
