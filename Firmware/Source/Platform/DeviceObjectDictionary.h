@@ -21,7 +21,6 @@
 #define ACT_SAVE_DT_TO_FLASH                    200                             //Сохранение пользовательских данных во FLASH процессора
 #define ACT_RESTORE_DT_FROM_FLASH               201                             //Восстановление данных из FLASH
 #define ACT_DT_RESET_TO_DEFAULT                 202                             //Сброс DataTable в состояние по умолчанию
-#define ACT_FLASH_CLEAR                         203                             //Очистка пользовательской FLASH памяти
 //
 
 //REGISTERS
@@ -40,18 +39,18 @@
 #define REG_FRONT_TRAP_P_KOEF                   10                              //Пропорциональный коэффициент регулятора для фронта трапеции
 #define REG_FRONT_TRAP_I_KOEF                   11                              //Интегральный коэффициент регулятора для фронта трапеции
 //---------------
-#define REG_SC_PULSE_VALUE                      64                              //Значение амплитуды импульса ударного тока, Ампер
-#define REG_WAVEFORM_TYPE                       65                              //Задание формы ударного тока (полусинус/трапеция)
-#define REG_TRAPEZE_EDGE_TIME                   66                              //Время длительности фронта трапеции, мкС
-#define REG_TEST_REGULATOR                      67                              //1-блок в режиме тестирования регулятора, 0-нормальный режим
-#define REG_SCPC_VERSION                        95                              //Версия блока SCPC
+#define REG_SC_PULSE_VALUE                      128                              //Значение амплитуды импульса ударного тока, Ампер
+#define REG_WAVEFORM_TYPE                       129                              //Задание формы ударного тока (полусинус/трапеция)
+#define REG_TRAPEZE_EDGE_TIME                   130                              //Время длительности фронта трапеции, мкС
+#define REG_TEST_REGULATOR                      131                              //1-блок в режиме тестирования регулятора, 0-нормальный режим
+#define REG_SCPC_VERSION                        191                              //Версия блока SCPC
 //---------------
-#define REG_BAT_VOLTAGE                         96                              //Напряжение на конденсаторной батарее, Вольт
-#define REG_DEV_STATE                           97                              //Статус работы блока
-#define REG_FAULT_REASON                        98
-#define REG_DISABLE_REASON                      99
-#define REG_WARNING                             100
-#define REG_PROBLEM                             101
+#define REG_BAT_VOLTAGE                         192                              //Напряжение на конденсаторной батарее, Вольт
+#define REG_DEV_STATE                           193                              //Статус работы блока
+#define REG_FAULT_REASON                        194
+#define REG_DISABLE_REASON                      195
+#define REG_WARNING                             196
+#define REG_PROBLEM                             197
 //---------------
 
 #define REG_FWINFO_SLAVE_NID			256	// Device CAN slave node ID

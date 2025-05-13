@@ -33,7 +33,6 @@ void CONTROL_Idle();                                                            
 void BatChargeProcess(void);                                                    //Контроль за напряжением на конденсаторах
 void DebugModeInit(void);                                                       //Инициализация контроллера в режиме Debug
 void Delay_mS(uint64_t Delay);                                                  //Функция формирования задержки, мС
-static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError);     //Обработка протокола SCCI/BSSI
 void IWDG_Control(void);                                                        //Контроль/сброс WatchDog
 void SetDeviceState(DeviceState NewState);                                      //Установка состояния блока
 bool CheckDeviceState(DeviceState NewState);                                    //Проверить состояние блока

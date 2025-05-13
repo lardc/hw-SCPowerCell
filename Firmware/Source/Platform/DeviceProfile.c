@@ -63,7 +63,7 @@ static void DEVPROFILE_FillWRPartDefault();
 void DEVPROFILE_Init(xCCI_FUNC_CallbackAction SpecializedDispatch, Boolean *MaskChanges)
 {
 	// Save values
-        ControllerDispatchFunction = SpecializedDispatch;
+	ControllerDispatchFunction = SpecializedDispatch;
 	MaskChangesFlag = MaskChanges;
 
 	// Init interface
@@ -83,10 +83,10 @@ void DEVPROFILE_Init(xCCI_FUNC_CallbackAction SpecializedDispatch, Boolean *Mask
 
 	// Init interface driver
 	SCCI_Init(&DEVICE_RS232_Interface, &RS232_IOConfig, &X_ServiceConfig, (pInt16U)DataTable,
-			  DATA_TABLE_SIZE, SCCI_TIMEOUT_TICKS, &RS232_EPState);
+			DATA_TABLE_SIZE, SCCI_TIMEOUT_TICKS, &RS232_EPState);
 	BCCI_Init(&DEVICE_CAN_Interface, &CAN_IOConfig, &X_ServiceConfig, (pInt16U)DataTable,
-			  DATA_TABLE_SIZE, &CAN_EPState);
-    //BCCIM_Init(&MASTER_DEVICE_CAN_Interface, &CAN_IOConfig, BCCIM_TIMEOUT_TICKS, &CONTROL_TimeCounter);
+			DATA_TABLE_SIZE, &CAN_EPState);
+    BCCIM_Init(&MASTER_DEVICE_CAN_Interface, &CAN_IOConfig, BCCIM_TIMEOUT_TICKS, &CONTROL_TimeCounter);
 
 	// Set write protection
 	SCCI_AddProtectedArea(&DEVICE_RS232_Interface, DATA_TABLE_WP_START, DATA_TABLE_SIZE - 1);
@@ -157,6 +157,10 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 {
 	switch(ActionID)
 	{
+		case ACT_RESET_FOR_PROGRAMMING:
+			BOOT_LOADER_VARIABLE = BOOT_LOADER_REQUEST;
+			break;
+
 		default:
 			return (ControllerDispatchFunction) ? ControllerDispatchFunction(ActionID, UserError) : FALSE;
 	}
