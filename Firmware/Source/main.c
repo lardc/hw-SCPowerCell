@@ -5,10 +5,8 @@ int main()
 {
   SetVectorTable();
 
-  Boolean clockInitResult;
-
   //Настройка системы тактирования
-  clockInitResult = SysClk_Config();
+  SysClk_Config();
 
   //Настройка портов ввода/вывода
   IO_Config();
@@ -37,19 +35,21 @@ int main()
   WatchDog_Config();
 
   //Инициализация логики работы контроллера
-  InitializeController(clockInitResult);
+  CONTROL_Init();
+  //InitializeController(clockInitResult);
 
   //Основной цикл
-  while(TRUE)
-  {
-   CONTROL_Idle();
-  }
+  while(true)
+	CONTROL_Idle();
+
+  return 0;
 }
 
 //---------------------------System clock config--------------------------------
-Boolean SysClk_Config(void)
+void SysClk_Config(void)
 {
-  return RCC_PLL_HSE_Config(QUARTZ_FREQUENCY, PREDIV_4, PLL_14);
+	RCC_PLL_HSE_Config(QUARTZ_FREQUENCY, PREDIV_4, PLL_14);
+	RCC_SysCfg_Clk_EN();
 }
 //------------------------------------------------------------------------------
 

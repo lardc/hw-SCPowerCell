@@ -20,7 +20,7 @@
 
 //Functions
 extern void CONTROL_Idle();
-Boolean SysClk_Config(void);
+void SysClk_Config();
 void IO_Config(void);
 void CAN_Config();
 void UART_Config();
