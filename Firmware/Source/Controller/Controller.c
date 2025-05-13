@@ -19,6 +19,7 @@
 #include "BCCIxParams.h"
 
 
+
 // Types
 //
 typedef void (*FUNC_AsyncDelegate)();
@@ -234,14 +235,9 @@ void Delay_mS(uint64_t Delay)
 //------------------------------------------------------------------------------
 void IWDG_Control(void)
 {
-  uint32_t McuResetFlag = (*(__IO uint32_t*)ADDRESS_FLAG_REGISTER)&0xFFFF;
-  if((McuResetFlag!=FLAG_RESET_FOR_PROG)&&(McuResetFlag!=FLAG_RESET))
-  {
-    IWDG_Refresh();
-  }
+	if(BOOT_LOADER_VARIABLE != BOOT_LOADER_REQUEST)
+		IWDG_Refresh();
 }
-//------------------------------------------------------------------------------
-
 //------------------------------------------------------------------------------
 void SetDeviceState(DeviceState NewState)
 {
