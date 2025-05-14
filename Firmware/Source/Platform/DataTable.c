@@ -11,7 +11,7 @@
 
 // Constants
 //
-#define DT_EPROM_ADDRESS	0x08004000
+#define DT_EPROM_ADDRESS	0x08004000u
 
 // Variables
 //
