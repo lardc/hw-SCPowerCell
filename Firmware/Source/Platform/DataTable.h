@@ -18,18 +18,18 @@
 #define DATA_TABLE_NV_SIZE		128
 //
 #define DATA_TABLE_NV_START		0
-#define DATA_TABLE_WR_START		128
-#define DATA_TABLE_WP_START		192
+#define DATA_TABLE_WR_START		64
+#define DATA_TABLE_WP_START		96
 #define DATA_TABLE_FWINF_START	256
 
 /*
  * DATA TABLE START 				------------- 0
  * 			[NON-VOLATILE AREA]
- *		END OF NON-VOLATILE AREA	------------- 127
- * 		START OF READ/WRITE AREA	------------- 128
+ *		END OF NON-VOLATILE AREA	------------- 63
+ * 		START OF READ/WRITE AREA	------------- 64
  * 			[VOLATILE AREA]
- *		END OF READ/WRITE AREA		------------- 191
- * 		START OF READ-ONLY AREA		------------- 192
+ *		END OF READ/WRITE AREA		------------- 95
+ * 		START OF READ-ONLY AREA		------------- 96
  * 			[VOLATILE R-O AREA]
  *		END OF READ-ONLY AREA		------------- 255
  * 		START OF READ-ONLY FW INFO AREA	--------- 256

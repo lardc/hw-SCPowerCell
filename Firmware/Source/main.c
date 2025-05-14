@@ -36,7 +36,6 @@ int main()
 
   //Инициализация логики работы контроллера
   CONTROL_Init();
-  //InitializeController(clockInitResult);
 
   //Основной цикл
   while(true)
@@ -177,13 +176,6 @@ void SYNC_INT_Config(void)
   EXTI_EnableInterrupt(EXTI4_IRQn, 1, true);
 }
 //------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void InitializeController(Boolean GoodClock)
-{
-  CONTROL_Init();
-}
-// -----------------------------------------------------------------------------
 
 //------------------------------UART config-------------------------------------
 void UART_Config(void)
