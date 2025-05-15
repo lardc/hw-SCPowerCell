@@ -15,7 +15,7 @@
 // Constants
 //
 #define DATA_TABLE_SIZE			300
-#define DATA_TABLE_NV_SIZE		128
+#define DATA_TABLE_NV_SIZE		64
 //
 #define DATA_TABLE_NV_START		0
 #define DATA_TABLE_WR_START		64
