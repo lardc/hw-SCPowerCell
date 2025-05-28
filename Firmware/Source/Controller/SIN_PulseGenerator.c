@@ -101,6 +101,7 @@ void SurgeCurrentConfig(void)
 void SineWaveFormConfig(float SurgeCurrent)
 {   
   static float DataTemp,X,X2,SurgeCurrentCorrect; 
+  Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS;
 
   if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
   {
@@ -127,9 +128,9 @@ void SineWaveFormConfig(float SurgeCurrent)
 
   
   //Построение таблицы
-  for(volatile int cnt=0;cnt<PULSE_BUFFER_SIZE;cnt++)
+  for(volatile int cnt=0;cnt<BufferSizeActual;cnt++)
   {
-    DataTemp = (float)cnt/PULSE_BUFFER_SIZE;
+    DataTemp = (float)cnt/BufferSizeActual;
     DataTemp = sin(3.1416*DataTemp);
     
     //Таблица синуса уставки

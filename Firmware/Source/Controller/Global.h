@@ -32,7 +32,7 @@
 #define BATTERY_THRESHOLD_MAX           90                                      //Максимальный порог заряда конденсаторов, Вольт
 #define PULSE_OFFSET_MAX                2500                                    //Максимальное значение смещения сигнала импульса (с ЦАПа)
 #define REGULATOR_OFFSET_MAX            4095                                    //Максимальное значение смещения регулятора
-#define PULSE_TIME_VALUE                10000                                   //Длительность импульса ударного тока, мкС
+#define PULSE_TIME_VALUE                20000                                   //Длительность импульса ударного тока, мкС
 #define PULSE_BUFFER_SIZE               (PULSE_TIME_VALUE/TIMER15_uS)           //Количество точек в буфере формы импульса
 #define LED_PERIOD_BLINK                250                                     //Период моргания светодиода, мС
 #define SYNC_LINE_HIGHSTATE_TIMEOUT     25                                      //Таймаут пребывания линии синхронизации в высоком состоянии

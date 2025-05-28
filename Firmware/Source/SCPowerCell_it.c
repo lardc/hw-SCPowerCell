@@ -69,8 +69,10 @@ void ADC3_IRQHandler(void)
     DAC_CH1_SetValue(RegulatorOut);
     //
 
+    Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS;
+
     PulseCounter++;
-    if(PulseCounter>PULSE_BUFFER_SIZE)
+    if(PulseCounter>BufferSizeActual)
     {
       SYNC_LINE_HIGH;
       SetDeviceState(DS_PulseEnd);
