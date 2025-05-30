@@ -12,6 +12,9 @@
 #include "Global.h"
 
 #define PULSE_DURATION_MIN 				10000  // в мкс
+
+#define PULSE_COUNT_MIN					0
+#define PULSE_COUNT_MAX					2
 // Types
 //
 typedef struct __TableItemConstraint

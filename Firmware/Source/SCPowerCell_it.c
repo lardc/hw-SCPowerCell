@@ -10,6 +10,7 @@
 #include "ZwNCAN.h"
 #include "ZwADC.h"
 #include "ZwSCI.h"
+#include "SIN_PulseGenerator.h"
 //
 
 //Variables
@@ -92,23 +93,31 @@ void ADC3_IRQHandler(void)
 //------------------------------------------------------------------------------
 void EXTI4_IRQHandler(void)
 {
-  if(CheckDeviceState(DS_PulseConfigReady))
+  if(SkipPulseCounter > 0)
   {
-    SetDeviceState(DS_PulseStart);
-    //
-    SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
-    //
-
-    Delay_mS(AMPLIFIRE_UNLOCK_TIME);
-
-    //Запуск формирования синуса
-    TIM_StatusClear(TIM15);
-    TIM_Start(TIM15);
-    TIM_Reset(TIM15);
-    //
+	  SkipPulseCounter--;
+	  EXTI_FlagReset(EXTI_4);
   }
+  else
+	{
+		if(CheckDeviceState(DS_PulseConfigReady))
+			{
+			SetDeviceState(DS_PulseStart);
+			//
+			SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
+			//
 
-  EXTI_FlagReset(EXTI_4);
+			Delay_mS(AMPLIFIRE_UNLOCK_TIME);
+
+			//Запуск формирования синуса
+			TIM_StatusClear(TIM15);
+			TIM_Start(TIM15);
+			TIM_Reset(TIM15);
+			//
+		}
+
+		EXTI_FlagReset(EXTI_4);
+	}
 }
 //------------------------------------------------------------------------------
 

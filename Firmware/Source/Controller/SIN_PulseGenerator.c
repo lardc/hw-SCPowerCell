@@ -1,5 +1,8 @@
 ﻿#include "SIN_PulseGenerator.h"
 
+// Variables
+Int16U SkipPulseCounter = 0;
+
 //-------------Старт формирования ударного тока в отладочном режиме-------------
 #ifdef DEBUG_MODE
 void SurgeCurrentStart_DebugMode(void)
@@ -48,7 +51,9 @@ void SurgeCurrentConfig(void)
 #ifdef DEBUG_MODE      
   DataTable[REG_SC_PULSE_VALUE] = DEBUG_CURRENT_VALUE;  
 #endif  
-    
+
+  SkipPulseCounter = DataTable[REG_SYNC_PULSE_COUNT];
+
   if(DataTable[REG_WAVEFORM_TYPE]==WAVEFORM_SINE)
   {
     if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)

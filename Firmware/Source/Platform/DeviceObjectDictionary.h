@@ -44,6 +44,7 @@
 #define REG_TRAPEZE_EDGE_TIME                   66                              //Время длительности фронта трапеции, мкС
 #define REG_TEST_REGULATOR                      67                              //1-блок в режиме тестирования регулятора, 0-нормальный режим
 #define REG_PULSE_DURATION						68								//Длительность импульса (в мкс)
+#define REG_SYNC_PULSE_COUNT					69								//Cчётчик пропуска импульсов синхронизации
 #define REG_SCPC_VERSION                        95                              //Версия блока SCPC
 //---------------
 #define REG_BAT_VOLTAGE                         96                              //Напряжение на конденсаторной батарее, Вольт
