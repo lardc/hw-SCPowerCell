@@ -1,7 +1,7 @@
 ﻿#include "SIN_PulseGenerator.h"
 
 // Variables
-Int16U SkipPulseCounter = 0;
+volatile Int16U SkipPulseCounter = 0;
 
 //-------------Старт формирования ударного тока в отладочном режиме-------------
 #ifdef DEBUG_MODE
@@ -133,7 +133,7 @@ void SineWaveFormConfig(float SurgeCurrent)
 
   
   //Построение таблицы
-  for(volatile int cnt=0;cnt<BufferSizeActual;cnt++)
+  for(int cnt=0;cnt<BufferSizeActual;cnt++)
   {
     DataTemp = (float)cnt/BufferSizeActual;
     DataTemp = sin(3.1416*DataTemp);

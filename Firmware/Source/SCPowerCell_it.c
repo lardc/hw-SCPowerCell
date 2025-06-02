@@ -96,10 +96,9 @@ void EXTI4_IRQHandler(void)
   if(SkipPulseCounter > 0)
   {
 	  SkipPulseCounter--;
-	  EXTI_FlagReset(EXTI_4);
   }
   else
-	{
+  {
 		if(CheckDeviceState(DS_PulseConfigReady))
 			{
 			SetDeviceState(DS_PulseStart);
@@ -116,8 +115,9 @@ void EXTI4_IRQHandler(void)
 			//
 		}
 
-		EXTI_FlagReset(EXTI_4);
-	}
+  }
+
+  EXTI_FlagReset(EXTI_4);
 }
 //------------------------------------------------------------------------------
 
