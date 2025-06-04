@@ -11,7 +11,8 @@
 
 
 //Def
-#define SCPC_VERSION                    20                                      //Версия блока SCPC
+#define SCPC_VERSION_V20				20										//Версия блока SCPC
+#define SCPC_VERSION_V11				11										//
 //------------------------------------------------
 #define ADDRESS_FLAG_REGISTER           0x20007FF0                              //Адрес регистра флагов
 #define ADDRESS_LOADED_PROGRAMM_START   0x08004800                              //Адрес начала памяти загруженной программы 

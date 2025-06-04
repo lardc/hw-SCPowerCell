@@ -108,6 +108,6 @@ const TableItemConstraint VConstraint[DATA_TABLE_WP_START - DATA_TABLE_WR_START]
   {0, 0, 0},																// 92
   {0, 0, 0},																// 93
   {0, 0, 0},																// 94
-  {SCPC_VERSION, SCPC_VERSION, SCPC_VERSION},								// 95
+  {SCPC_VERSION_V11, SCPC_VERSION_V20, SCPC_VERSION_V20},					// 95
 };
 // No more

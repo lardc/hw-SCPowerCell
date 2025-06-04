@@ -40,33 +40,22 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError);
 //
 void CONTROL_Init()
 {
-  // Переменные для конфигурации EndPoint
-  Int16U EPIndexes[EP_COUNT] = {EP16_Data_Pulse};
-  Int16U EPSized[EP_COUNT] = {VALUES_x_SIZE};
-  pInt16U EPCounters[EP_COUNT] = {(pInt16U)&CONTROL_Values_Pulse_Counter};
-  pInt16U EPDatas[EP_COUNT] = {CONTROL_Values_Pulse};
-  
-  // Конфигурация сервиса работы Data-table и EPROM
-  EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
+	// Переменные для конфигурации EndPoint
+	Int16U EPIndexes[EP_COUNT] = {EP16_Data_Pulse};
+	Int16U EPSized[EP_COUNT] = {VALUES_x_SIZE};
+	pInt16U EPCounters[EP_COUNT] = {(pInt16U)&CONTROL_Values_Pulse_Counter};
+	pInt16U EPDatas[EP_COUNT] = {CONTROL_Values_Pulse};
+	// Сброс значений
+	DEVPROFILE_ResetControlSection();
+	// Инициализация device profile
+	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
+	DEVPROFILE_InitEPService(EPIndexes, EPSized, EPCounters, EPDatas);
+	// Сброс значений
+	DEVPROFILE_ResetControlSection();
 
-  // Инициализация data table
-  DT_Init(EPROMService, FALSE);
-  DT_SaveFirmwareInfo(CAN_SLAVE_NID, CAN_MASTER_NID);
+	RegulatorOut_SetLow();
 
-  // Сброс значений 
-  DEVPROFILE_ResetControlSection();
-
-  // Инициализация device profile
-  DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
-  DEVPROFILE_InitEPService(EPIndexes, EPSized, EPCounters, EPDatas);
-  
-  // Сброс значений 
-  DEVPROFILE_ResetControlSection();
-
-  
-  RegulatorOut_SetLow();
-  
-  IWDG_Control();
+	IWDG_Control();
 }
 // ----------------------------------------
 

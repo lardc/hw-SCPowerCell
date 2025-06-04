@@ -1,47 +1,60 @@
 ﻿#include "main.h"
 #include "BCCIxParams.h"
+#include "DataTable.h"
 
 int main()
 {
-  SetVectorTable();
+	SetVectorTable();
 
-  //Настройка системы тактирования
-  SysClk_Config();
+	//Настройка системы тактирования
+	SysClk_Config();
+
+	// Конфигурация сервиса работы DataTable и EPROM
+	EPROMServiceConfig EPROMService = { (FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT };
+
+	// Инициализация DataTable
+	DT_Init(EPROMService, false);
+	DT_SaveFirmwareInfo(CAN_SLAVE_NID, 0);
+
+	if(DataTable[6] == 0 || DataTable[6] == 65535)
+		DataTable[REG_SCPC_VERSION] = SCPC_VERSION_V20;
+	else
+		DataTable[REG_SCPC_VERSION] = SCPC_VERSION_V11;
 
   //Настройка портов ввода/вывода
-  IO_Config();
+	IO_Config();
 
-  //UART configure
-  UART_Config();
+	//UART configure
+	UART_Config();
 
-  CAN_Config();
+	CAN_Config();
 
-  //Настройка ЦАПа
-  DAC1_Config();
+	//Настройка ЦАПа
+	DAC1_Config();
 
-  //Настройка Timer6 для ЦАПа
-  Timer6_Config();
+	//Настройка Timer6 для ЦАПа
+	Timer6_Config();
 
-  //Настройка Timer15 для цифрового регулятора
-  Timer15_Config();
+	//Настройка Timer15 для цифрового регулятора
+	Timer15_Config();
 
-  //Настройка Timer7, системный счетчик, период 1мС
-  Timer7_Config();
+	//Настройка Timer7, системный счетчик, период 1мС
+	Timer7_Config();
 
-  //Настройка АЦП
-  ADC_Init();
+	//Настройка АЦП
+	ADC_Init();
 
-  //WatchDog configure
-  WatchDog_Config();
+	//WatchDog configure
+	WatchDog_Config();
 
-  //Инициализация логики работы контроллера
-  CONTROL_Init();
+	//Инициализация логики работы контроллера
+	CONTROL_Init();
 
-  //Основной цикл
-  while(true)
-	CONTROL_Idle();
+	//Основной цикл
+	while(true)
+		CONTROL_Idle();
 
-  return 0;
+	return 0;
 }
 
 //---------------------------System clock config--------------------------------

@@ -14,6 +14,7 @@
 #include "ZwEXTI.h"
 #include "ZwSCI.h"
 #include "ZwIWDG.h"
+#include "ZwNFLASH.h"
 #include "Controller.h"
 #include "SysConfig.h"
 
