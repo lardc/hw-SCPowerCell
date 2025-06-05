@@ -186,32 +186,31 @@ void DebugModeInit(void)
 //---------------------Процесс заряда батареи-----------------------------------
 void BatChargeProcess(void)
 {
-  uint16_t Threshold = DataTable[REG_BAT_VOLTAGE_THRESHOLD];
-  
-  if(DataTable[REG_BAT_VOLTAGE]>=Threshold)
-  {
-    if(CheckDeviceState(DS_WaitTimeOut)&&(CONTROL_TimeCounter>=(SC_DelayCounter+SC_PULSE_DELAY_VALUE)))
-    {
-      SetDeviceState(DS_Ready);
-    }
-    
-    if(CheckDeviceState(DS_BatteryChargeWait))
-    {
-      SetDeviceState(DS_Ready);
-    }
-  }
-  
-  //Через 5 сек после импульса меняем состояние на DS_WaitTimeOut
-  if(CheckDeviceState(DS_PulseEnd)&&(CONTROL_TimeCounter>=(SC_DelayCounter+CHANGE_STATE_DELAY_TIME)))
-  {
-    SetDeviceState(DS_WaitTimeOut);
-  }
-  
-  DataTable[REG_BAT_VOLTAGE] = (uint16_t)(ADC_Measure(ADC1, 4)*((float)DataTable[REG_BAT_VOLTAGE_COEF])/1000); //Сохраняем в память в формате [Вольт/10]
+	uint16_t Threshold = DataTable[REG_BAT_VOLTAGE_THRESHOLD];
+
+	if(DataTable[REG_BAT_VOLTAGE] >= Threshold)
+	{
+		if(CheckDeviceState(DS_WaitTimeOut) && (CONTROL_TimeCounter >= (SC_DelayCounter + SC_PULSE_DELAY_VALUE)))
+		{
+			SetDeviceState(DS_Ready);
+		}
+
+		if(CheckDeviceState(DS_BatteryChargeWait))
+		{
+			SetDeviceState(DS_Ready);
+		}
+	}
+	//Через 5 сек после импульса меняем состояние на DS_WaitTimeOut
+	if(CheckDeviceState(DS_PulseEnd)&& (CONTROL_TimeCounter >= (SC_DelayCounter +
+							(CONTROL_Version == 20 ? CHANGE_STATE_DELAY_TIME_V20 : CHANGE_STATE_DELAY_TIME_V11))))
+	{
+		SetDeviceState(DS_WaitTimeOut);
+	}
+
+	DataTable[REG_BAT_VOLTAGE] = (uint16_t)(ADC_Measure(ADC1, 4) * ((float)DataTable[REG_BAT_VOLTAGE_COEF]) / 1000); //Сохраняем в память в формате [Вольт/10]
 }
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
 void Delay_mS(uint64_t Delay)
 {
   TIM_Reset(TIM7);
