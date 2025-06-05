@@ -25,7 +25,7 @@ void SurgeCurrentStart_DebugMode(void)
 //------------------------------------------------------------------------------
 void RegulatorOut_SetLow(void)
 {
-  DAC_CH1_SetValue(350);
+	CONTROL_Version == 20 ? DAC_CH1_SetValue(350) : DAC_CH2_SetValue(0);
 }
 //------------------------------------------------------------------------------
 
@@ -38,72 +38,81 @@ void SetRegulatorOffset(uint32_t CurrentValue)
 
 //-------------------Формирование таблицы формы ударного тока-------------------
 void SurgeCurrentConfig(void)
-{ 
-  //Преверяем правильно ли задан тип фармы ударного тока
-  if((DataTable[REG_WAVEFORM_TYPE]!=WAVEFORM_SINE)&&(DataTable[REG_WAVEFORM_TYPE]!=WAVEFORM_TRAPEZE))
-  {
-    SetDeviceState(DS_Fault);
-    DataTable[REG_FAULT_REASON]=ERR_WAVEFORM_TYPE;
-    return;
-  }
-  //
-  
-#ifdef DEBUG_MODE      
-  DataTable[REG_SC_PULSE_VALUE] = DEBUG_CURRENT_VALUE;  
-#endif  
+{
+	//Преверяем правильно ли задан тип фармы ударного тока
+	if((DataTable[REG_WAVEFORM_TYPE] != WAVEFORM_SINE) && (DataTable[REG_WAVEFORM_TYPE] != WAVEFORM_TRAPEZE))
+	{
+		SetDeviceState(DS_Fault);
+		DataTable[REG_FAULT_REASON] = ERR_WAVEFORM_TYPE;
+		return;
+	}
+	//
+#ifdef DEBUG_MODE
+	DataTable[REG_SC_PULSE_VALUE] = DEBUG_CURRENT_VALUE;
+#endif
 
-  SkipPulseCounter = DataTable[REG_SYNC_PULSE_COUNT];
+	SkipPulseCounter = CONTROL_Version == 20 ? DataTable[REG_SYNC_PULSE_COUNT] : 0;
 
-  if(DataTable[REG_WAVEFORM_TYPE]==WAVEFORM_SINE)
-  {
-    if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
-    {
-      //Если режим тестирования регулятора включен, то обнуляем коэффициенты регулятора
-      P_Reg_TopPulse=0;
-      I_Reg_TopPulse=0;
-    }
-    else
-    {
-      //Подготовка коэффициентов регулятора
-      P_Reg_TopPulse = (float)DataTable[REG_SINE_P_KOEF]/10000;
-      I_Reg_TopPulse = (float)DataTable[REG_SINE_I_KOEF]/10000;
-      //
-    }
-    
-    SineWaveFormConfig(DataTable[REG_SC_PULSE_VALUE]);
-  }
-  
-  if(DataTable[REG_WAVEFORM_TYPE]==WAVEFORM_TRAPEZE)
-  {
-    if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
-    {
-      //Если режим тестирования регулятора включен, то обнуляем коэффициенты регулятора
-      P_Reg_TopPulse=0;
-      I_Reg_TopPulse=0;
-      P_Reg_FrontPulse=0;
-      I_Reg_FrontPulse=0;
-    }
-    else
-    {
-      //Подготовка коэффициентов регулятора
-      P_Reg_TopPulse = (float)DataTable[REG_TOP_TRAP_P_KOEF]/10000;
-      I_Reg_TopPulse = (float)DataTable[REG_TOP_TRAP_I_KOEF]/10000;
-      P_Reg_FrontPulse = (float)DataTable[REG_FRONT_TRAP_P_KOEF]/100000;
-      I_Reg_FrontPulse = (float)DataTable[REG_FRONT_TRAP_I_KOEF]/100000;
-      //
-    }
-    
-    TrapezeWaveFormConfig(DataTable[REG_SC_PULSE_VALUE]);
-  }
-  
-  if((!CheckDeviceState(DS_Fault))&&(!CheckDeviceState(DS_Disabled)))
-  {
-    SetRegulatorOffset(DataTable[REG_SC_PULSE_VALUE]);
-    SetDeviceState(DS_PulseConfigReady);
-  }
+	if(DataTable[REG_WAVEFORM_TYPE] == WAVEFORM_SINE)
+	{
+		if(CONTROL_Version == 20)
+		{
+			if(DataTable[REG_TEST_REGULATOR] == MODE_TEST_REG_ON)
+			{
+				//Если режим тестирования регулятора включен, то обнуляем коэффициенты регулятора
+				P_Reg_TopPulse = 0;
+				I_Reg_TopPulse = 0;
+			}
+			else
+			{
+				//Подготовка коэффициентов регулятора
+				P_Reg_TopPulse = (float)DataTable[REG_SINE_P_KOEF] / 10000;
+				I_Reg_TopPulse = (float)DataTable[REG_SINE_I_KOEF] / 10000;
+				//
+			}
+			SineWaveFormConfig_V20(DataTable[REG_SC_PULSE_VALUE]);
+		}
+		else
+			SineWaveFormConfig_V11(DataTable[REG_SC_PULSE_VALUE]);
+	}
+
+	if(DataTable[REG_WAVEFORM_TYPE] == WAVEFORM_TRAPEZE)
+	{
+		if(CONTROL_Version == 20)
+		{
+			if(DataTable[REG_TEST_REGULATOR] == MODE_TEST_REG_ON)
+			{
+				//Если режим тестирования регулятора включен, то обнуляем коэффициенты регулятора
+				P_Reg_TopPulse = 0;
+				I_Reg_TopPulse = 0;
+				P_Reg_FrontPulse = 0;
+				I_Reg_FrontPulse = 0;
+			}
+			else
+			{
+				//Подготовка коэффициентов регулятора
+				P_Reg_TopPulse = (float)DataTable[REG_TOP_TRAP_P_KOEF] / 10000;
+				I_Reg_TopPulse = (float)DataTable[REG_TOP_TRAP_I_KOEF] / 10000;
+				P_Reg_FrontPulse = (float)DataTable[REG_FRONT_TRAP_P_KOEF] / 100000;
+				I_Reg_FrontPulse = (float)DataTable[REG_FRONT_TRAP_I_KOEF] / 100000;
+				//
+			}
+			TrapezeWaveFormConfig_V20(DataTable[REG_SC_PULSE_VALUE]);
+		}
+		else
+			TrapezeWaveFormConfig_V11(DataTable[REG_SC_PULSE_VALUE]);
+	}
+
+	if((!CheckDeviceState(DS_Fault)) && (!CheckDeviceState(DS_Disabled)))
+	{
+		if(CONTROL_Version == 11)
+			HardwareSetup();
+		SetRegulatorOffset(DataTable[REG_SC_PULSE_VALUE]);
+		SetDeviceState(DS_PulseConfigReady);
+	}
 }
 //------------------------------------------------------------------------------
-void SineWaveFormConfig(float SurgeCurrent)
+void SineWaveFormConfig_V20(float SurgeCurrent)
 {   
   static float DataTemp,X,X2,SurgeCurrentCorrect; 
   Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS_V20;
@@ -147,17 +156,18 @@ void SineWaveFormConfig(float SurgeCurrent)
   //
 }
 //------------------------------------------------------------------------------
-void TrapezeWaveFormConfig(float SurgeCurrent)
+void TrapezeWaveFormConfig_V20(float SurgeCurrent)
 {
   float X,X2,SurgeCurrentCorrect,SC_Coef;
   uint16_t Counter=0;
   uint16_t CounterTemp=0;
+  Int16U TrapezeMaxValue = CONTROL_Version == 20 ? SC_TRAPEZE_MAX_VALUE_V20 : SC_TRAPEZE_MAX_VALUE_V11;
   
   //Проверяем на максимальное значение
-  if(DataTable[REG_SC_PULSE_VALUE]>SC_TRAPEZE_MAX_VALUE)
+  if(DataTable[REG_SC_PULSE_VALUE]>TrapezeMaxValue)
   {
-    DataTable[REG_SC_PULSE_VALUE] = SC_TRAPEZE_MAX_VALUE;
-    SurgeCurrent = SC_TRAPEZE_MAX_VALUE;
+    DataTable[REG_SC_PULSE_VALUE] = TrapezeMaxValue;
+    SurgeCurrent = TrapezeMaxValue;
     DataTable[REG_WARNING] = WARNING_SC_CUT_OFF;
   }
   //
@@ -238,5 +248,117 @@ void TrapezeWaveFormConfig(float SurgeCurrent)
     Counter++;
   }
   //
+}
+//------------------------------------------------------------------------------
+void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
+{
+	float DataTemp;
+	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
+
+	for(volatile int cnt = 0; cnt < (PULSE_BUFFER_SIZE - 2); cnt++)
+	{
+		DataTemp = (float)cnt / (PULSE_BUFFER_SIZE - 2);
+		DataTemp = sin(3.1416 * DataTemp);
+		PulseDataBuffer[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
+		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
+		PulseDataBuffer[cnt] += (uint16_t)DataTemp;
+
+		//Сохраняем в Endpoint
+		DataTemp = PulseDataBuffer[cnt];
+		CONTROL_Values_Pulse[cnt] = (uint16_t)DataTemp;
+	}
+	PulseDataBuffer[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+
+	CONTROL_Values_Pulse_Counter = EP_SIZE;
+}
+//------------------------------------------------------------------------------
+
+void TrapezeWaveFormConfig_V11(uint16_t SurgeCurrent)
+{
+	float DataTemp;
+	float EdgePointsCounter = 0;
+	uint16_t PulsePointsCounter = 0;
+	Int16U TrapezeMaxValue = CONTROL_Version == 20 ? SC_TRAPEZE_MAX_VALUE_V20 : SC_TRAPEZE_MAX_VALUE_V11;
+
+	//Проверяем на максимальное значение
+	if(DataTable[REG_SC_PULSE_VALUE] > TrapezeMaxValue)
+	{
+		DataTable[REG_SC_PULSE_VALUE] = TrapezeMaxValue;
+		SurgeCurrent = TrapezeMaxValue;
+		DataTable[REG_WARNING] = WARNING_SC_CUT_OFF;
+	}
+	//
+
+	//Вычисляем количество точек фронта и самого импульса, в зависимости от заданного значения в мкС
+	EdgePointsCounter = (float)(DataTable[REG_TRAPEZE_EDGE_TIME] * PULSE_BUFFER_SIZE) / PULSE_TIME_VALUE;
+	PulsePointsCounter = (uint16_t)(PULSE_BUFFER_SIZE - EdgePointsCounter * 2 - 2);
+	//
+
+	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
+
+	//Формируем наростающий фронт трапеции
+	for(volatile int cnt = 0; cnt < EdgePointsCounter; cnt++)
+	{
+		DataTemp = ((float)cnt) / EdgePointsCounter;
+		PulseDataBuffer[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
+		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
+		PulseDataBuffer[cnt] += (uint16_t)DataTemp;
+
+		//Сохраняем в Endpoint
+		DataTemp = PulseDataBuffer[cnt];
+		CONTROL_Values_Pulse[cnt] = (uint16_t)DataTemp;
+	}
+	//
+
+	//Формируем основной импульс трапеции
+	for(volatile int cnt = (int)EdgePointsCounter; cnt < (int)(EdgePointsCounter + PulsePointsCounter); cnt++)
+	{
+		PulseDataBuffer[cnt] = (uint16_t)(SurgeCurrent * SC_Coef);
+		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
+		PulseDataBuffer[cnt] += (uint16_t)DataTemp;
+
+		//Сохраняем в Endpoint
+		DataTemp = PulseDataBuffer[cnt];
+		CONTROL_Values_Pulse[cnt] = (uint16_t)DataTemp;
+	}
+	//
+
+	//Формируем спадающий фронт трапеции
+	for(volatile int cnt = 0; cnt < (int)EdgePointsCounter; cnt++)
+	{
+		DataTemp = 1.0 - ((float)cnt) / EdgePointsCounter;
+		PulseDataBuffer[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] = (uint16_t)(DataTemp * SurgeCurrent
+				* SC_Coef);
+		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
+		PulseDataBuffer[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] += (uint16_t)DataTemp;
+
+		//Сохраняем в Endpoint
+		DataTemp = PulseDataBuffer[(int)(EdgePointsCounter + PulsePointsCounter + cnt)];
+		CONTROL_Values_Pulse[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] = (uint16_t)DataTemp;
+	}
+	//
+
+	PulseDataBuffer[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+
+	CONTROL_Values_Pulse_Counter = EP_SIZE;
+}
+//------------------------------------------------------------------------------
+
+void HardwareSetup(void)
+{
+	SYNC_LINE_HIGH;
+
+	TIM_StatusClear(TIM6);
+	TIM_Start(TIM6);
+	TIM_Reset(TIM6);
+	while(!CheckDeviceState(DS_PulseEnd)){}
+
+	SetDeviceState(DS_Ready);
 }
 //------------------------------------------------------------------------------
