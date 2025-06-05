@@ -221,8 +221,9 @@ void ADC_Init(void)
 //---------------------------EXTI config----------------------------------------
 void SYNC_INT_Config(void)
 {
-  EXTI_Config(EXTI_PB, EXTI_4, FALL_TRIG, 0);
-  EXTI_EnableInterrupt(EXTI4_IRQn, 1, true);
+	EXTI_Config(EXTI_PB, EXTI_4, FALL_TRIG, 0);
+	EXTI_EnableInterrupt(EXTI4_IRQn, 1, true);
+	//CONTROL_Version == 20 ? EXTI_EnableInterrupt(EXTI4_IRQn, 1, true) : EXTI_Int(EXTI4_IRQn, 1, true);
 }
 //------------------------------------------------------------------------------
 
@@ -230,7 +231,7 @@ void SYNC_INT_Config(void)
 void UART_Config(void)
 {
   USART_Init(USART1, SYSCLK, USART_BOUDRATE);
-  USART_Recieve_Interupt(USART1, 2, true);
+  USART_Recieve_Interupt(USART1, (CONTROL_Version == 20 ? 2 : 1), true);
 }
 //------------------------------------------------------------------------------
 
