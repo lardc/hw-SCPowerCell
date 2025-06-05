@@ -13,19 +13,21 @@
 
 //System clock
 #define SYSCLK                      70000000                        //Тактовая частота системной шины процессора
-#define QUARTZ_FREQUENCY                        20000000                        //Частота кварца
+#define QUARTZ_FREQUENCY            20000000                        //Частота кварца
 //
 
 //USART
 #define USART_BOUDRATE                          115200                          //Скорость USART
 #define USART_FIFOlen                           32                              //Длина FIFO USART
-#define	SCCI_TIMEOUT_TICKS  		        1000
-#define	BCCIM_TIMEOUT_TICKS				50										// Таймаут протоколоа мастер BCCI (в мс)
+#define	SCCI_TIMEOUT_TICKS  					1000
+#define	BCCIM_TIMEOUT_TICKS						50										// Таймаут протоколоа мастер BCCI (в мс)
 //
 
 //Периоды таймеров, мкС
-#define TIMER6_uS                               0.1
-#define TIMER15_uS                              30
+#define TIMER6_uS_V20							0.1
+#define TIMER15_uS_V20							30
+#define TIMER6_uS_V11							10
+#define TIMER15_uS_V11							1
 #define TIMER7_uS                               1000
 
 //CAN

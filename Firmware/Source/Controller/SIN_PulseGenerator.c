@@ -106,7 +106,7 @@ void SurgeCurrentConfig(void)
 void SineWaveFormConfig(float SurgeCurrent)
 {   
   static float DataTemp,X,X2,SurgeCurrentCorrect; 
-  Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS;
+  Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS_V20;
 
   if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
   {

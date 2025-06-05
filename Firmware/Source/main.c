@@ -16,12 +16,17 @@ int main()
 	DT_Init(EPROMService, false);
 	DT_SaveFirmwareInfo(CAN_SLAVE_NID, 0);
 
-	if(DataTable[6] == 0 || DataTable[6] == 65535)
-		DataTable[REG_SCPC_VERSION] = SCPC_VERSION_V20;
-	else
-		DataTable[REG_SCPC_VERSION] = SCPC_VERSION_V11;
+	//Проверка версии платы
+	for(int i = 6; i <= 11; i++)
+	{
+		if(DataTable[6] != 0 || DataTable[6] != 65535)
+			CONTROL_Version = SCPC_VERSION_V20;
+	}
 
-  //Настройка портов ввода/вывода
+	if(CONTROL_Version == 0)
+			CONTROL_Version = SCPC_VERSION_V11;
+
+	//Настройка портов ввода/вывода
 	IO_Config();
 
 	//UART configure
@@ -75,43 +80,42 @@ void WatchDog_Config(void)
 //-----------------------------GPIO config--------------------------------------
 void IO_Config(void)
 {
-  //Включение тактирования портов
-  RCC_GPIO_Clk_EN(PORTA);//GPIOA
-  RCC_GPIO_Clk_EN(PORTB);//GPIOB
-  //
+	//Включение тактирования портов
+	RCC_GPIO_Clk_EN(PORTA); //GPIOA
+	RCC_GPIO_Clk_EN(PORTB); //GPIOB
+	//
 
   //Аналоговые
-  GPIO_Config(GPIOA,Pin_3,Analog,NoPull,HighSpeed,NoPull);//PA3 - вход АЦП (напряжение на конденсаторах)
-  GPIO_Config(GPIOA,Pin_4,Analog,NoPull,HighSpeed,NoPull);//PA4 - выход ЦАПа
-  GPIO_Config(GPIOB,Pin_13,Analog,NoPull,HighSpeed,NoPull);//PB13 - вход АЦП (ОС связь по току)
+	GPIO_Config(GPIOA, Pin_3, Analog, NoPull, HighSpeed, NoPull);	//PA3 - вход АЦП (напряжение на конденсаторах)
+	GPIO_Config(GPIOA, Pin_4, Analog, NoPull, HighSpeed, NoPull);	//PA4 - выход ЦАПа
+	GPIO_Config(GPIOB, Pin_13, Analog, NoPull, HighSpeed, NoPull);	//PB13 - вход АЦП (ОС связь по току)
+	GPIO_Config(GPIOA, Pin_5, Analog, NoPull, HighSpeed, NoPull);	//PA5 - выход ЦАПа
 
-  //Входы
-  GPIO_Config(GPIOA,Pin_15,Input,NoPull,HighSpeed,NoPull);//PA15 - вход кнопки запуска ударного тока
-  GPIO_Config(GPIOB,Pin_4,Input,NoPull,HighSpeed,NoPull);//PB4(SYNC)
+	//Входы
+	GPIO_Config(GPIOA, Pin_15, Input, NoPull, HighSpeed, NoPull);	//PA15 - вход кнопки запуска ударного тока
+	GPIO_Config(GPIOB, Pin_4, Input, NoPull, HighSpeed, NoPull);	//PB4(SYNC)
 
+	//Выходы
+	GPIO_Config(GPIOA, Pin_2, Output, PushPull, HighSpeed, NoPull);	//PA2(PS_ON)
+	GPIO_Config(GPIOB, Pin_3, Output, OpenDrain, HighSpeed, Pull_Up);	//PB3(SYNC_DRIVE)
+	GPIO_Bit_Set(GPIOB, Pin_3);
+	GPIO_Config(GPIOB, Pin_15, Output, PushPull, HighSpeed, NoPull);	//PB15(LED)
 
-  //Выходы
-  GPIO_Config(GPIOA,Pin_2,Output,PushPull,HighSpeed,NoPull);//PA2(PS_ON)
-  GPIO_Config(GPIOB,Pin_3,Output,OpenDrain,HighSpeed,Pull_Up);//PB3(SYNC_DRIVE)
-  GPIO_Bit_Set(GPIOB, Pin_3);
-  GPIO_Config(GPIOB,Pin_15,Output,PushPull,HighSpeed,NoPull);//PB15(LED)
+	//Альтернативные функции
+	GPIO_Config(GPIOA, Pin_11, AltFn, PushPull, HighSpeed, NoPull);	//PA11(CAN RX)
+	GPIO_AltFn(GPIOA, Pin_11, AltFn_9);
 
-  //Альтернативные функции
-  GPIO_Config(GPIOA,Pin_11,AltFn,PushPull,HighSpeed,NoPull);//PA11(CAN RX)
-  GPIO_AltFn(GPIOA, Pin_11, AltFn_9);
+	GPIO_Config(GPIOA, Pin_12, AltFn, PushPull, HighSpeed, NoPull);	//PA12(CAN TX)
+	GPIO_AltFn(GPIOA, Pin_12, AltFn_9);
 
-  GPIO_Config(GPIOA,Pin_12,AltFn,PushPull,HighSpeed,NoPull);//PA12(CAN TX)
-  GPIO_AltFn(GPIOA, Pin_12, AltFn_9);
+	GPIO_Config(GPIOA, Pin_9, AltFn, PushPull, HighSpeed, NoPull);	//PA9(USART1 TX)
+	GPIO_AltFn(GPIOA, Pin_9, AltFn_7);	//Alternate function PA9 enable
 
-  GPIO_Config(GPIOA,Pin_9,AltFn,PushPull,HighSpeed,NoPull);//PA9(USART1 TX)
-  GPIO_AltFn(GPIOA, Pin_9, AltFn_7);//Alternate function PA9 enable
+	GPIO_Config(GPIOA, Pin_10, AltFn, PushPull, HighSpeed, NoPull);	//PA10(USART1 RX)
+	GPIO_AltFn(GPIOA, Pin_10, AltFn_7);	//Alternate function PA10 enable
 
-  GPIO_Config(GPIOA,Pin_10,AltFn,PushPull,HighSpeed,NoPull);//PA10(USART1 RX)
-  GPIO_AltFn(GPIOA, Pin_10, AltFn_7);//Alternate function PA10 enable
-
-
-  //Внешние прерывания
-  SYNC_INT_Config();
+	//Внешние прерывания
+	SYNC_INT_Config();
 }
 //------------------------------------------------------------------------------
 
@@ -137,10 +141,11 @@ void Timer7_Config(void)
 //-----------------------------Timer 6 config-----------------------------------
 void Timer6_Config(void)
 {
-  TIM_Clock_En(TIM_6);
-  TIM_Config(TIM6, SYSCLK, TIMER6_uS);
-  TIM_MasterMode(TIM6,MMS_UPDATE);
-  TIM_Start(TIM6);
+	TIM_Clock_En(TIM_6);
+	TIM_Config(TIM6, SYSCLK, (CONTROL_Version == 20 ? TIMER6_uS_V20 : TIMER6_uS_V11));
+	TIM_MasterMode(TIM6, MMS_UPDATE);
+
+	CONTROL_Version == 11 ? TIM_DMA(TIM6, DMAEN) : TIM_Start(TIM6);
 }
 //------------------------------------------------------------------------------
 
@@ -148,8 +153,10 @@ void Timer6_Config(void)
 void Timer15_Config(void)
 {
   TIM_Clock_En(TIM_15);
-  TIM_Config(TIM15, SYSCLK, TIMER15_uS);
+  TIM_Config(TIM15, SYSCLK, (CONTROL_Version == 20 ? TIMER15_uS_V20 : TIMER15_uS_V11));
   TIM_MasterMode(TIM15,MMS_UPDATE);
+  if (CONTROL_Version == 11)
+	  TIM_Start(TIM15);
 }
 //------------------------------------------------------------------------------
 

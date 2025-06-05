@@ -31,6 +31,7 @@ Int64U CONTROL_TimeCounter = 0;
 static Boolean CycleActive = FALSE;
 Int16U CONTROL_Values_Pulse[VALUES_x_SIZE];
 Int16U CONTROL_Values_Pulse_Counter = 0;
+Int16U CONTROL_Version = 0;
 //
 //Forward fucntions
 static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError);
