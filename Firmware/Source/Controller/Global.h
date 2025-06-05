@@ -22,29 +22,34 @@
 #define FLAG_RESET_FOR_PROG				0x1111									//Значение флага при перезагрузке процессора с последующим перепрограммированием
 #define FLAG_RESET						0x4444									//Значение флага при перезагрузке процессора без перепрограммирования
 //------------------------------------------------
-#define MCU_FLASH_SIZE					0x7FF									//Размер FLASH памяти MCU для пользовательских задач
+//Дефайны для версии 1.1
+#define CHANGE_STATE_DELAY_TIME_V11		20000									//Время после импульса тока, когда блок переходит в состояние DS_WaitTimeOut
+#define SC_MIN_VALUE_V11				0										//Мнимальное значение ударного тока, Амперы
+#define SC_TRAPEZE_MAX_VALUE_V11		1500									//Максимальное значение ударного тока при трапецеидальной форме, Амперы
+#define PULSE_TIME_VALUE_V11			(TIMER6_uS_V11 * PULSE_BUFFER_SIZE_V11)	//Длительность импульса ударного тока, мкС
+#define PULSE_BUFFER_SIZE_V11			1000									//Количество точек в буфере формы импульса
+#define LED_PERIOD_BLINK_V11			500										//Период моргания светодиода, мС
+#define AMPLIFIRE_UNLOCK_TIME_V11		10										//Время ожидания выхода в рабочий режим аналогового регулятора
+//Дефайны для версии 2.0
 #define CHANGE_STATE_DELAY_TIME_V20		1000									//Время после импульса тока, когда блок переходит в состояние DS_WaitTimeOut
-#define CHANGE_STATE_DELAY_TIME_V11		20000									//
-#define SC_PULSE_DELAY_VALUE			60000									//Время паузы между импульсами ударного тока, мС
 #define SC_MIN_VALUE_V20				300										//Мнимальное значение ударного тока, Амперы
-#define SC_MIN_VALUE_V11				0										//
-#define SC_SINE_MAX_VALUE				3100									//Максимальное значение ударного тока при полусинусоидальной форме, Амперы
 #define SC_TRAPEZE_MAX_VALUE_V20		3100									//Максимальное значение ударного тока при трапецеидальной форме, Амперы
-#define SC_TRAPEZE_MAX_VALUE_V11		1500									//
+#define PULSE_TIME_VALUE_V20			20000									//Длительность импульса ударного тока, мкС
+#define PULSE_BUFFER_SIZE_V20			(PULSE_TIME_VALUE_V20 / TIMER15_uS_V20)	//Количество точек в буфере формы импульса
+#define LED_PERIOD_BLINK_V20			250										//Период моргания светодиода, мС
+#define AMPLIFIRE_UNLOCK_TIME_V20		9										//Время ожидания выхода в рабочий режим аналогового регулятора
+//Общие дефайны
+#define MCU_FLASH_SIZE					0x7FF									//Размер FLASH памяти MCU для пользовательских задач
+#define SC_PULSE_DELAY_VALUE			60000									//Время паузы между импульсами ударного тока, мС
+#define SC_SINE_MAX_VALUE				3100									//Максимальное значение ударного тока при полусинусоидальной форме, Амперы
 #define TRAPEZE_EDGE_TIME_MIN			100										//Минимальное фремя фронта трапеции, мкС
 #define TRAPEZE_EDGE_TIME_MAX			1000									//Максимальное фремя фронта трапеции, мкС
 #define BATTERY_THRESHOLD_MAX			90										//Максимальный порог заряда конденсаторов, Вольт
 #define PULSE_OFFSET_MAX				2500									//Максимальное значение смещения сигнала импульса (с ЦАПа)
 #define REGULATOR_OFFSET_MAX			4095									//Максимальное значение смещения регулятора
-#define PULSE_TIME_VALUE				20000									//Длительность импульса ударного тока, мкС
-#define PULSE_BUFFER_SIZE				(PULSE_TIME_VALUE/TIMER15_uS_V20)			//Количество точек в буфере формы импульса
-#define LED_PERIOD_BLINK_V20			250										//Период моргания светодиода, мС
-#define LED_PERIOD_BLINK_V11			500										//Период моргания светодиода, мС
 #define SYNC_LINE_HIGHSTATE_TIMEOUT		25										//Таймаут пребывания линии синхронизации в высоком состоянии
 #define SC_MEASURE_COEF					0.91									//Коэффициент пропорц-ти измерения тока
 #define DAC_MAX_LEVEL					3800									//Ограничение максимального значения ЦАПа
-#define AMPLIFIRE_UNLOCK_TIME_V20		9										//Время ожидания выхода в рабочий режим аналогового регулятора
-#define AMPLIFIRE_UNLOCK_TIME_V11		10										//
 //------------------------------------------------
 #define MODE_TEST_REG_ON				1										//Режим блока для тестирования регулятор включен
 #define MODE_TEST_REG_OFF				0										//Режим блока для тестирования регулятор выключен
@@ -74,8 +79,13 @@ extern bool Timeout_1S;
 extern bool Timeout_1mS;
 extern uint32_t MasterAddress;
 extern uint16_t ValueCurrentTable;
-extern int PulseDataBuffer[PULSE_BUFFER_SIZE];
-extern int PulseDataSetUp[PULSE_BUFFER_SIZE];
+
+extern int PulseDataBuffer_V20[PULSE_BUFFER_SIZE_V20];
+extern int PulseDataSetUp_V20[PULSE_BUFFER_SIZE_V20];
+
+extern int PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11];
+extern int PulseDataSetUp_V11[PULSE_BUFFER_SIZE_V11];
+
 extern uint64_t LED_PeriodCounter;
 extern uint64_t SyncLine_TimeOutCounter;
 extern uint64_t SC_DelayCounter;

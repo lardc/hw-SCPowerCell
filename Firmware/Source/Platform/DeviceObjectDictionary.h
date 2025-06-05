@@ -72,7 +72,8 @@
 #define EP16_Data_Pulse		                1	                        // Оцифрованные данные прямого напряжения
 #define EP_WRITE_COUNT		                1                               
 #define EP_COUNT			        1
-#define EP_SIZE                                 PULSE_BUFFER_SIZE
+#define EP_SIZE_V20                                 PULSE_BUFFER_SIZE_V20
+#define EP_SIZE_V11									PULSE_BUFFER_SIZE_V11
 //
 
 

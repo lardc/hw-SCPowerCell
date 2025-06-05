@@ -26,14 +26,14 @@ void WaitUnlockAMP();
 //
 
 
-//------------------------------------------------------------------------------
+//-----------------------------------Прерывание только для версии 2.0 ------------------
 void ADC3_IRQHandler(void)
 {
   if(CheckDeviceState(DS_PulseStart))
   {
     //Алгоритм ПИ регулирования
     uint16_t SurgeCurrent = (uint16_t)(ADC_Read(ADC3)*SC_MEASURE_COEF);
-    RegulatorError = PulseDataBuffer[PulseCounter] - SurgeCurrent;
+    RegulatorError = PulseDataBuffer_V20[PulseCounter] - SurgeCurrent;
 
     if(DataTable[REG_WAVEFORM_TYPE]==WAVEFORM_SINE)
     {
@@ -54,19 +54,19 @@ void ADC3_IRQHandler(void)
       }
     }
 
-    RegulatorOut = (int)((PulseDataSetUp[PulseCounter]+DataTable[REG_PULSE_OFFSET_VALUE])+Qp+Qi);
+    RegulatorOut = (int)((PulseDataSetUp_V20[PulseCounter]+DataTable[REG_PULSE_OFFSET_VALUE])+Qp+Qi);
 
 
     //Сохраняем данные в endpoint
     if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
     {
-      CONTROL_Values_Pulse[PulseCounter]=(Int16U)SurgeCurrent;
+      CONTROL_Values_Pulse_V20[PulseCounter]=(Int16U)SurgeCurrent;
     }
     else
     {
-      CONTROL_Values_Pulse[PulseCounter]=(Int16U)RegulatorError;
+      CONTROL_Values_Pulse_V20[PulseCounter]=(Int16U)RegulatorError;
     }
-    CONTROL_Values_Pulse_Counter=EP_SIZE;
+    CONTROL_Values_Pulse_Counter=EP_SIZE_V20;
     //
 
     if(RegulatorOut>DAC_MAX_LEVEL)RegulatorOut=DAC_MAX_LEVEL;

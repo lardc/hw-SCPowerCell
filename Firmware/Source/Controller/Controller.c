@@ -29,7 +29,8 @@ typedef void (*FUNC_AsyncDelegate)();
 //
 Int64U CONTROL_TimeCounter = 0;
 static Boolean CycleActive = FALSE;
-Int16U CONTROL_Values_Pulse[VALUES_x_SIZE];
+Int16U CONTROL_Values_Pulse_V20[VALUES_x_SIZE_V20];
+Int16U CONTROL_Values_Pulse_V11[VALUES_x_SIZE_V11];
 Int16U CONTROL_Values_Pulse_Counter = 0;
 Int16U CONTROL_Version = 0;
 //
@@ -43,14 +44,17 @@ void CONTROL_Init()
 {
 	// Переменные для конфигурации EndPoint
 	Int16U EPIndexes[EP_COUNT] = {EP16_Data_Pulse};
-	Int16U EPSized[EP_COUNT] = {VALUES_x_SIZE};
+	Int16U EPSized_V11[EP_COUNT] = {VALUES_x_SIZE_V11};
+	Int16U EPSized_V20[EP_COUNT] = {VALUES_x_SIZE_V20};
 	pInt16U EPCounters[EP_COUNT] = {(pInt16U)&CONTROL_Values_Pulse_Counter};
-	pInt16U EPDatas[EP_COUNT] = {CONTROL_Values_Pulse};
+	pInt16U EPDatas_V11[EP_COUNT] = {CONTROL_Values_Pulse_V11};
+	pInt16U EPDatas_V20[EP_COUNT] = {CONTROL_Values_Pulse_V20};
 	// Сброс значений
 	DEVPROFILE_ResetControlSection();
 	// Инициализация device profile
 	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
-	DEVPROFILE_InitEPService(EPIndexes, EPSized, EPCounters, EPDatas);
+	DEVPROFILE_InitEPService(EPIndexes, (CONTROL_Version == 20 ? EPSized_V20 : EPSized_V11), EPCounters,
+				(CONTROL_Version == 20 ? EPDatas_V20 : EPDatas_V11));
 	// Сброс значений
 	DEVPROFILE_ResetControlSection();
 

@@ -142,39 +142,39 @@ void SineWaveFormConfig_V20(float SurgeCurrent)
 
   
   //Построение таблицы
-  for(int cnt=0;cnt<BufferSizeActual;cnt++)
-  {
-    DataTemp = (float)cnt/BufferSizeActual;
-    DataTemp = sin(3.1416*DataTemp);
-    
-    //Таблица синуса уставки
-    PulseDataSetUp[cnt] = (uint16_t)(DataTemp*SurgeCurrentCorrect);
-    
-    //Таблица синуса с учетом коррекции
-    PulseDataBuffer[cnt] = (uint16_t)(DataTemp*SurgeCurrent);
-  }
-  //
+	for(int cnt = 0; cnt < BufferSizeActual; cnt++)
+	{
+		DataTemp = (float)cnt / BufferSizeActual;
+		DataTemp = sin(3.1416 * DataTemp);
+
+		//Таблица синуса уставки
+		PulseDataSetUp_V20[cnt] = (uint16_t)(DataTemp * SurgeCurrentCorrect);
+
+		//Таблица синуса с учетом коррекции
+		PulseDataBuffer_V20[cnt] = (uint16_t)(DataTemp * SurgeCurrent);
+	}
+	//
 }
 //------------------------------------------------------------------------------
+
 void TrapezeWaveFormConfig_V20(float SurgeCurrent)
 {
   float X,X2,SurgeCurrentCorrect,SC_Coef;
   uint16_t Counter=0;
   uint16_t CounterTemp=0;
-  Int16U TrapezeMaxValue = CONTROL_Version == 20 ? SC_TRAPEZE_MAX_VALUE_V20 : SC_TRAPEZE_MAX_VALUE_V11;
   
   //Проверяем на максимальное значение
-  if(DataTable[REG_SC_PULSE_VALUE]>TrapezeMaxValue)
+  if(DataTable[REG_SC_PULSE_VALUE]>SC_TRAPEZE_MAX_VALUE_V20)
   {
-    DataTable[REG_SC_PULSE_VALUE] = TrapezeMaxValue;
-    SurgeCurrent = TrapezeMaxValue;
+    DataTable[REG_SC_PULSE_VALUE] = SC_TRAPEZE_MAX_VALUE_V20;
+    SurgeCurrent = SC_TRAPEZE_MAX_VALUE_V20;
     DataTable[REG_WARNING] = WARNING_SC_CUT_OFF;
   }
   //
   
   //Вычисляем количество точек фронта и самого импульса, в зависимости от заданного значения в мкС
-  EdgePointsCounter = (float)(DataTable[REG_TRAPEZE_EDGE_TIME]*PULSE_BUFFER_SIZE)/PULSE_TIME_VALUE;
-  PulsePointsCounter = (uint16_t)(PULSE_BUFFER_SIZE-EdgePointsCounter*2);
+  EdgePointsCounter = (float)(DataTable[REG_TRAPEZE_EDGE_TIME]*PULSE_BUFFER_SIZE_V20)/PULSE_TIME_VALUE_V20;
+  PulsePointsCounter = (uint16_t)(PULSE_BUFFER_SIZE_V20-EdgePointsCounter*2);
   //  
   
   if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
@@ -208,13 +208,13 @@ void TrapezeWaveFormConfig_V20(float SurgeCurrent)
   //Формируем нарастающий фронт трапеции
   while(1)
   {
-    PulseDataBuffer[Counter] = Delta*Counter;
-    PulseDataSetUp[Counter] = DeltaSetUp*Counter;
+    PulseDataBuffer_V20[Counter] = Delta*Counter;
+    PulseDataSetUp_V20[Counter] = DeltaSetUp*Counter;
     
-    if((PulseDataBuffer[Counter]>SurgeCurrent)||(PulseDataSetUp[Counter]>SurgeCurrentCorrect))
+    if((PulseDataBuffer_V20[Counter]>SurgeCurrent)||(PulseDataSetUp_V20[Counter]>SurgeCurrentCorrect))
     {
-      PulseDataBuffer[Counter]=(int)SurgeCurrent;
-      PulseDataSetUp[Counter]=(int)SurgeCurrentCorrect;
+      PulseDataBuffer_V20[Counter]=(int)SurgeCurrent;
+      PulseDataSetUp_V20[Counter]=(int)SurgeCurrentCorrect;
       break;
     }
     
@@ -224,10 +224,10 @@ void TrapezeWaveFormConfig_V20(float SurgeCurrent)
   
   //Формируем основной импульс трапеции
   CounterTemp = Counter;
-  while(Counter<(PULSE_BUFFER_SIZE-CounterTemp-1))
+  while(Counter<(PULSE_BUFFER_SIZE_V20-CounterTemp-1))
   {
-    PulseDataBuffer[Counter] = (uint16_t)(SurgeCurrent); 
-    PulseDataSetUp[Counter] = (uint16_t)(SurgeCurrentCorrect); 
+    PulseDataBuffer_V20[Counter] = (uint16_t)(SurgeCurrent);
+    PulseDataSetUp_V20[Counter] = (uint16_t)(SurgeCurrentCorrect);
     Counter++;
   }
   //
@@ -235,13 +235,13 @@ void TrapezeWaveFormConfig_V20(float SurgeCurrent)
   //Формируем спадающий фронт трапеции
   while(1)
   {
-    PulseDataBuffer[Counter] = PulseDataBuffer[Counter-1] - Delta;
-    PulseDataSetUp[Counter] = PulseDataSetUp[Counter-1] - DeltaSetUp;
+    PulseDataBuffer_V20[Counter] = PulseDataBuffer_V20[Counter-1] - Delta;
+    PulseDataSetUp_V20[Counter] = PulseDataSetUp_V20[Counter-1] - DeltaSetUp;
     
-    if((PulseDataBuffer[Counter]<=0)||(PulseDataSetUp[Counter]<=0))
+    if((PulseDataBuffer_V20[Counter]<=0)||(PulseDataSetUp_V20[Counter]<=0))
     {
-      PulseDataBuffer[Counter] = 0;
-      PulseDataSetUp[Counter] = 0;
+      PulseDataBuffer_V20[Counter] = 0;
+      PulseDataSetUp_V20[Counter] = 0;
       break;
     }
     
@@ -255,24 +255,24 @@ void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
 	float DataTemp;
 	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
 
-	for(volatile int cnt = 0; cnt < (PULSE_BUFFER_SIZE - 2); cnt++)
+	for(volatile int cnt = 0; cnt < (PULSE_BUFFER_SIZE_V11 - 2); cnt++)
 	{
-		DataTemp = (float)cnt / (PULSE_BUFFER_SIZE - 2);
+		DataTemp = (float)cnt / (PULSE_BUFFER_SIZE_V11 - 2);
 		DataTemp = sin(3.1416 * DataTemp);
-		PulseDataBuffer[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
+		PulseDataBuffer_V11[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
 		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
-		PulseDataBuffer[cnt] += (uint16_t)DataTemp;
+		PulseDataBuffer_V11[cnt] += (uint16_t)DataTemp;
 
 		//Сохраняем в Endpoint
-		DataTemp = PulseDataBuffer[cnt];
-		CONTROL_Values_Pulse[cnt] = (uint16_t)DataTemp;
+		DataTemp = PulseDataBuffer_V11[cnt];
+		CONTROL_Values_Pulse_V11[cnt] = (uint16_t)DataTemp;
 	}
-	PulseDataBuffer[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
-	PulseDataBuffer[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
-	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
-	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11 - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11 - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse_V11[PULSE_BUFFER_SIZE_V11 - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse_V11[PULSE_BUFFER_SIZE_V11 - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
 
-	CONTROL_Values_Pulse_Counter = EP_SIZE;
+	CONTROL_Values_Pulse_Counter = EP_SIZE_V11;
 }
 //------------------------------------------------------------------------------
 
@@ -281,20 +281,19 @@ void TrapezeWaveFormConfig_V11(uint16_t SurgeCurrent)
 	float DataTemp;
 	float EdgePointsCounter = 0;
 	uint16_t PulsePointsCounter = 0;
-	Int16U TrapezeMaxValue = CONTROL_Version == 20 ? SC_TRAPEZE_MAX_VALUE_V20 : SC_TRAPEZE_MAX_VALUE_V11;
 
 	//Проверяем на максимальное значение
-	if(DataTable[REG_SC_PULSE_VALUE] > TrapezeMaxValue)
+	if(DataTable[REG_SC_PULSE_VALUE] > SC_TRAPEZE_MAX_VALUE_V11)
 	{
-		DataTable[REG_SC_PULSE_VALUE] = TrapezeMaxValue;
-		SurgeCurrent = TrapezeMaxValue;
+		DataTable[REG_SC_PULSE_VALUE] = SC_TRAPEZE_MAX_VALUE_V11;
+		SurgeCurrent = SC_TRAPEZE_MAX_VALUE_V11;
 		DataTable[REG_WARNING] = WARNING_SC_CUT_OFF;
 	}
 	//
 
 	//Вычисляем количество точек фронта и самого импульса, в зависимости от заданного значения в мкС
-	EdgePointsCounter = (float)(DataTable[REG_TRAPEZE_EDGE_TIME] * PULSE_BUFFER_SIZE) / PULSE_TIME_VALUE;
-	PulsePointsCounter = (uint16_t)(PULSE_BUFFER_SIZE - EdgePointsCounter * 2 - 2);
+	EdgePointsCounter = (float)(DataTable[REG_TRAPEZE_EDGE_TIME] * PULSE_BUFFER_SIZE_V11) / PULSE_TIME_VALUE_V11;
+	PulsePointsCounter = (uint16_t)(PULSE_BUFFER_SIZE_V11 - EdgePointsCounter * 2 - 2);
 	//
 
 	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
@@ -303,26 +302,26 @@ void TrapezeWaveFormConfig_V11(uint16_t SurgeCurrent)
 	for(volatile int cnt = 0; cnt < EdgePointsCounter; cnt++)
 	{
 		DataTemp = ((float)cnt) / EdgePointsCounter;
-		PulseDataBuffer[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
+		PulseDataBuffer_V11[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
 		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
-		PulseDataBuffer[cnt] += (uint16_t)DataTemp;
+		PulseDataBuffer_V11[cnt] += (uint16_t)DataTemp;
 
 		//Сохраняем в Endpoint
-		DataTemp = PulseDataBuffer[cnt];
-		CONTROL_Values_Pulse[cnt] = (uint16_t)DataTemp;
+		DataTemp = PulseDataBuffer_V11[cnt];
+		CONTROL_Values_Pulse_V11[cnt] = (uint16_t)DataTemp;
 	}
 	//
 
 	//Формируем основной импульс трапеции
 	for(volatile int cnt = (int)EdgePointsCounter; cnt < (int)(EdgePointsCounter + PulsePointsCounter); cnt++)
 	{
-		PulseDataBuffer[cnt] = (uint16_t)(SurgeCurrent * SC_Coef);
+		PulseDataBuffer_V11[cnt] = (uint16_t)(SurgeCurrent * SC_Coef);
 		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
-		PulseDataBuffer[cnt] += (uint16_t)DataTemp;
+		PulseDataBuffer_V11[cnt] += (uint16_t)DataTemp;
 
 		//Сохраняем в Endpoint
-		DataTemp = PulseDataBuffer[cnt];
-		CONTROL_Values_Pulse[cnt] = (uint16_t)DataTemp;
+		DataTemp = PulseDataBuffer_V11[cnt];
+		CONTROL_Values_Pulse_V11[cnt] = (uint16_t)DataTemp;
 	}
 	//
 
@@ -330,23 +329,23 @@ void TrapezeWaveFormConfig_V11(uint16_t SurgeCurrent)
 	for(volatile int cnt = 0; cnt < (int)EdgePointsCounter; cnt++)
 	{
 		DataTemp = 1.0 - ((float)cnt) / EdgePointsCounter;
-		PulseDataBuffer[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] = (uint16_t)(DataTemp * SurgeCurrent
+		PulseDataBuffer_V11[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] = (uint16_t)(DataTemp * SurgeCurrent
 				* SC_Coef);
 		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
-		PulseDataBuffer[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] += (uint16_t)DataTemp;
+		PulseDataBuffer_V11[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] += (uint16_t)DataTemp;
 
 		//Сохраняем в Endpoint
-		DataTemp = PulseDataBuffer[(int)(EdgePointsCounter + PulsePointsCounter + cnt)];
-		CONTROL_Values_Pulse[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] = (uint16_t)DataTemp;
+		DataTemp = PulseDataBuffer_V11[(int)(EdgePointsCounter + PulsePointsCounter + cnt)];
+		CONTROL_Values_Pulse_V11[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] = (uint16_t)DataTemp;
 	}
 	//
 
-	PulseDataBuffer[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
-	PulseDataBuffer[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
-	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
-	CONTROL_Values_Pulse[PULSE_BUFFER_SIZE - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11 - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11 - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse_V11[PULSE_BUFFER_SIZE_V11 - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse_V11[PULSE_BUFFER_SIZE_V11 - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
 
-	CONTROL_Values_Pulse_Counter = EP_SIZE;
+	CONTROL_Values_Pulse_Counter = EP_SIZE_V11;
 }
 //------------------------------------------------------------------------------
 

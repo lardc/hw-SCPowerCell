@@ -191,8 +191,8 @@ void DMA_Config()
 	DMA_Clk_Enable(DMA_ClkEN);
 	DMA_Reset(DMA1_Channel3);
 	DMA_Interrupt(DMA1_Channel3, DMA_TRANSFER_COMPLETE, 2, true);
-	DMA1ChannelX_DataConfig(DMA1_Channel3, (uint32_t)(&PulseDataBuffer[0]), (uint32_t)(&DAC->DHR12R1),
-			PULSE_BUFFER_SIZE);
+	DMA1ChannelX_DataConfig(DMA1_Channel3, (uint32_t)(&PulseDataBuffer_V11[0]), (uint32_t)(&DAC->DHR12R1),
+			PULSE_BUFFER_SIZE_V11);
 	DMA1ChannelX_Config(DMA1_Channel3, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
 	DMA_MINC_EN, false, DMA_CIRCMODE_EN, DMA_READ_FROM_MEM, DMA_CHANNEL_EN);
 }

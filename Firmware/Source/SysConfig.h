@@ -50,7 +50,8 @@
 #define ZW_CAN_UseExtendedID                    0x04
 
 
-#define VALUES_x_SIZE				PULSE_BUFFER_SIZE
+#define VALUES_x_SIZE_V20				PULSE_BUFFER_SIZE_V20
+#define VALUES_x_SIZE_V11				PULSE_BUFFER_SIZE_V11
 
 //Ports definitions
 #define LED_ON                                  GPIO_Bit_Rst(GPIOB, Pin_15)
