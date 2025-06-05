@@ -32,6 +32,7 @@ void Timer7_Config(void);
 void Timer2_Config(void);
 void Timer15_Config(void);
 void DAC1_Config(void);
+void DMA_Config();
 void ADC_Init(void);
 void SYNC_INT_Config(void);
 void Timer3_Config(void);

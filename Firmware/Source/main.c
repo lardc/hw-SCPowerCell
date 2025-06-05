@@ -37,6 +37,10 @@ int main()
 	//Настройка ЦАПа
 	DAC1_Config();
 
+	//Настройка DMA для ЦАПа (только для 1.1)
+	if(CONTROL_Version == 11)
+		DMA_Config();
+
 	//Настройка Timer6 для ЦАПа
 	Timer6_Config();
 
@@ -152,40 +156,65 @@ void Timer6_Config(void)
 //-----------------------------Timer 4 config-----------------------------------
 void Timer15_Config(void)
 {
-  TIM_Clock_En(TIM_15);
-  TIM_Config(TIM15, SYSCLK, (CONTROL_Version == 20 ? TIMER15_uS_V20 : TIMER15_uS_V11));
-  TIM_MasterMode(TIM15,MMS_UPDATE);
-  if (CONTROL_Version == 11)
-	  TIM_Start(TIM15);
+	TIM_Clock_En(TIM_15);
+	TIM_Config(TIM15, SYSCLK, (CONTROL_Version == 20 ? TIMER15_uS_V20 : TIMER15_uS_V11));
+	TIM_MasterMode(TIM15, MMS_UPDATE);
+	if(CONTROL_Version == 11)
+		TIM_Start(TIM15);
 }
 //------------------------------------------------------------------------------
 
 //-----------------------------DAC1 config--------------------------------------
 void DAC1_Config(void)
 {
-  DACx_Clk_Enable(DAC_1_ClkEN);
-  DACx_Reset();
-  DAC_Trigger_Config(TRIG1_TIMER6, TRIG1_ENABLE);
-  DAC_Buff(BUFF1, false);
-  DACx_Enable(DAC1ENABLE);
+	DACx_Clk_Enable(DAC_1_ClkEN);
+	DACx_Reset();
+	DAC_Trigger_Config(TRIG1_TIMER6, TRIG1_ENABLE);
+	DAC_Buff(BUFF1, false);
+	if(CONTROL_Version == 11)
+	{
+		DACx_DMA_Config(DAC_DMA1ENABLE, DAC_DMA1UdIntDISABLE);
+		DAC_Trigger_Config(TRIG2_TIMER15, TRIG2_ENABLE);
+		DACx_Enable(DAC2ENABLE);
+	}
+	else
+		DACx_Enable(DAC1ENABLE);
+}
+//------------------------------------------------------------------------------
+
+//----------------------------DMA config(только для 1.1)------------------------
+void DMA_Config()
+{
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+	SYSCFG->CFGR1 |= SYSCFG_CFGR1_TIM6DAC1Ch1_DMA_RMP;
+
+	DMA_Clk_Enable(DMA_ClkEN);
+	DMA_Reset(DMA1_Channel3);
+	DMA_Interrupt(DMA1_Channel3, DMA_TRANSFER_COMPLETE, 2, true);
+	DMA1ChannelX_DataConfig(DMA1_Channel3, (uint32_t)(&PulseDataBuffer[0]), (uint32_t)(&DAC->DHR12R1),
+			PULSE_BUFFER_SIZE);
+	DMA1ChannelX_Config(DMA1_Channel3, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
+	DMA_MINC_EN, false, DMA_CIRCMODE_EN, DMA_READ_FROM_MEM, DMA_CHANNEL_EN);
 }
 //------------------------------------------------------------------------------
 
 //-------------------------------ADC config-------------------------------------
 void ADC_Init(void)
 {
-  RCC_ADC_Clk_EN(ADC_12_ClkEN);
-  ADC_Calibration(ADC1);
-  ADC_SoftTrigConfig(ADC1);
-  ADC_Enable(ADC1);
-
-  RCC_ADC_Clk_EN(ADC_34_ClkEN);
-  ADC_Calibration(ADC3);
-  ADC_TrigConfig(ADC3, ADC34_TIM15_TRGO, RISE);
-  ADC_ChannelSeqLen(ADC3, 1);
-  ADC_ChannelSet_Sequence1_4(ADC3, 5, 1);
-  ADC_Interrupt(ADC3, EOCIE, 0, true);
-  ADC_Enable(ADC3);
+	RCC_ADC_Clk_EN(ADC_12_ClkEN);
+	ADC_Calibration(ADC1);
+	ADC_SoftTrigConfig(ADC1);
+	ADC_Enable(ADC1);
+	if(CONTROL_Version == 20)
+	{
+		RCC_ADC_Clk_EN(ADC_34_ClkEN);
+		ADC_Calibration(ADC3);
+		ADC_TrigConfig(ADC3, ADC34_TIM15_TRGO, RISE);
+		ADC_ChannelSeqLen(ADC3, 1);
+		ADC_ChannelSet_Sequence1_4(ADC3, 5, 1);
+		ADC_Interrupt(ADC3, EOCIE, 0, true);
+		ADC_Enable(ADC3);
+	}
 }
 //------------------------------------------------------------------------------
 
