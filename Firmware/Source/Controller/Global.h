@@ -38,7 +38,8 @@
 #define REGULATOR_OFFSET_MAX			4095									//Максимальное значение смещения регулятора
 #define PULSE_TIME_VALUE				20000									//Длительность импульса ударного тока, мкС
 #define PULSE_BUFFER_SIZE				(PULSE_TIME_VALUE/TIMER15_uS_V20)			//Количество точек в буфере формы импульса
-#define LED_PERIOD_BLINK				250										//Период моргания светодиода, мС
+#define LED_PERIOD_BLINK_V20			250										//Период моргания светодиода, мС
+#define LED_PERIOD_BLINK_V11			500										//Период моргания светодиода, мС
 #define SYNC_LINE_HIGHSTATE_TIMEOUT		25										//Таймаут пребывания линии синхронизации в высоком состоянии
 #define SC_MEASURE_COEF					0.91									//Коэффициент пропорц-ти измерения тока
 #define DAC_MAX_LEVEL					3800									//Ограничение максимального значения ЦАПа

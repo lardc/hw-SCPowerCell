@@ -195,37 +195,40 @@ void USART1_IRQHandler()
 //------------------------------------------------------------------------------
 void TIM7_IRQHandler(void)
 {
-  if (TIM_StatusCheck(TIM7))
-  {
-    CONTROL_TimeCounter++;
+	if(TIM_StatusCheck(TIM7))
+	{
+		CONTROL_TimeCounter++;
 
-    //Моргаем светодиодом
-    if(CONTROL_TimeCounter>(LED_PeriodCounter+LED_PERIOD_BLINK))
-    {
-      if(LED_STATE)LED_ON;
-      else LED_OFF;
-      LED_PeriodCounter = CONTROL_TimeCounter;
-    }
-    //
+		//Моргаем светодиодом
+		if(CONTROL_TimeCounter > (LED_PeriodCounter + (CONTROL_Version == 20 ? LED_PERIOD_BLINK_V20 : LED_PERIOD_BLINK_V11)))
+		{
+			if(LED_STATE)
+				LED_ON;
+			else
+				LED_OFF;
+			LED_PeriodCounter = CONTROL_TimeCounter;
+		}
+		//
 
-    //Если линия синхронизации остается в 1 больше чем SYNC_LINE_HIGHSTATE_TIMEOUT
-    //то выставляем ошибку SYNC_TIMEOUT
-    if((SyncLine_TimeOutCounter!=0)&&(CONTROL_TimeCounter>(SyncLine_TimeOutCounter+SYNC_LINE_HIGHSTATE_TIMEOUT)))
-    {
-      if(!(SYNC_LINE_STATE))
-      {
-        SetDeviceState(DS_Disabled);
-        DataTable[REG_DISABLE_REASON]=ERR_SYNC_TIMEOUT;
-      }
-      else
-      {
-        SyncLine_TimeOutCounter=0;
-      }
-    }
-    //
-  }
+		//Если линия синхронизации остается в 1 больше чем SYNC_LINE_HIGHSTATE_TIMEOUT
+		//то выставляем ошибку SYNC_TIMEOUT
+		if((SyncLine_TimeOutCounter != 0)
+				&& (CONTROL_TimeCounter > (SyncLine_TimeOutCounter + SYNC_LINE_HIGHSTATE_TIMEOUT)))
+		{
+			if(!(SYNC_LINE_STATE))
+			{
+				SetDeviceState(DS_Disabled);
+				DataTable[REG_DISABLE_REASON] = ERR_SYNC_TIMEOUT;
+			}
+			else
+			{
+				SyncLine_TimeOutCounter = 0;
+			}
+		}
+		//
+	}
 
-  TIM_StatusClear(TIM7);
+	TIM_StatusClear(TIM7);
 }
 
 void WaitUnlockAMP(void)
