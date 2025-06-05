@@ -223,7 +223,6 @@ void SYNC_INT_Config(void)
 {
 	EXTI_Config(EXTI_PB, EXTI_4, FALL_TRIG, 0);
 	EXTI_EnableInterrupt(EXTI4_IRQn, 1, true);
-	//CONTROL_Version == 20 ? EXTI_EnableInterrupt(EXTI4_IRQn, 1, true) : EXTI_Int(EXTI4_IRQn, 1, true);
 }
 //------------------------------------------------------------------------------
 

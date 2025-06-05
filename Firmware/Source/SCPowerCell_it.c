@@ -8,6 +8,7 @@
 #include "ZwEXTI.h"
 #include "Controller.h"
 #include "ZwNCAN.h"
+#include "ZwDMA.h"
 #include "ZwADC.h"
 #include "ZwSCI.h"
 #include "SIN_PulseGenerator.h"
@@ -20,6 +21,10 @@ int RegulatorOut=0;
 int Qp=0;
 long int Qi=0;
 //
+//Функции
+void WaitUnlockAMP();
+//
+
 
 //------------------------------------------------------------------------------
 void ADC3_IRQHandler(void)
@@ -90,34 +95,78 @@ void ADC3_IRQHandler(void)
 }
 //------------------------------------------------------------------------------
 
+//------------------------------Прерывание по DMA только для версии 1.1-----------------------------------------
+void DMA1_Channel3_IRQHandler(void)
+{
+	if(DMA_TransferCompleteCheck(DMA_ISR_TCIF3))
+	{
+		TIM_Stop(TIM6);
+
+		SYNC_LINE_HIGH;
+
+		SetDeviceState(DS_PulseEnd);
+
+		RegulatorOut_SetLow();
+
+		SC_DelayCounter = CONTROL_TimeCounter;
+
+		DMA_TransferCompleteFlagReset(DMA_IFCR_CTCIF3);
+	}
+}
+//------------------------------------------------------------------------------
+
 //------------------------------------------------------------------------------
 void EXTI4_IRQHandler(void)
 {
-  if(SkipPulseCounter > 0)
-  {
-	  SkipPulseCounter--;
-  }
-  else
-  {
-		if(CheckDeviceState(DS_PulseConfigReady))
+	if(CONTROL_Version == 20)
+	{
+		// версия 2.0
+		if(SkipPulseCounter > 0)
+		{
+			SkipPulseCounter--;
+		}
+		else
+		{
+			if(CheckDeviceState(DS_PulseConfigReady))
 			{
+				SetDeviceState(DS_PulseStart);
+				//
+				SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
+				//
+
+				Delay_mS(AMPLIFIRE_UNLOCK_TIME_V20);
+
+				//Запуск формирования синуса
+				TIM_StatusClear(TIM15);
+				TIM_Start(TIM15);
+				TIM_Reset(TIM15);
+				//
+			}
+
+		}
+	}
+	else // версия 1.1
+	{
+		if(CheckDeviceState(DS_PulseConfigReady))
+		{
 			SetDeviceState(DS_PulseStart);
 			//
 			SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
 			//
 
-			Delay_mS(AMPLIFIRE_UNLOCK_TIME);
+			//Ждем выхода в рабочий режим усилителя регулятора
+			WaitUnlockAMP();
+			//
 
 			//Запуск формирования синуса
-			TIM_StatusClear(TIM15);
-			TIM_Start(TIM15);
-			TIM_Reset(TIM15);
+			TIM_StatusClear(TIM6);
+			TIM_Start(TIM6);
+			TIM_Reset(TIM6);
 			//
 		}
+	}
 
-  }
-
-  EXTI_FlagReset(EXTI_4);
+	EXTI_FlagReset(EXTI_4);
 }
 //------------------------------------------------------------------------------
 
@@ -136,11 +185,10 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 //------------------------------------------------------------------------------
 void USART1_IRQHandler()
 {
-  if(ZwSCI_RecieveCheck(USART1))
-  {
-    ZwSCI_RegisterToFIFO(USART1);
-  }
-  ZwSCI_RecieveFlagClear(USART1);
+	if(ZwSCI_RecieveCheck(USART1))
+		ZwSCI_RegisterToFIFO(USART1);
+
+	ZwSCI_RecieveFlagClear(USART1);
 }
 //------------------------------------------------------------------------------
 
@@ -178,5 +226,10 @@ void TIM7_IRQHandler(void)
   }
 
   TIM_StatusClear(TIM7);
+}
+
+void WaitUnlockAMP(void)
+{
+	Delay_mS(AMPLIFIRE_UNLOCK_TIME_V11);
 }
 //------------------------------------------------------------------------------
