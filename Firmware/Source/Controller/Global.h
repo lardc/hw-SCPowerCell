@@ -29,7 +29,6 @@
 #define PULSE_TIME_VALUE_V11			(TIMER6_uS_V11 * PULSE_BUFFER_SIZE_V11)	//Длительность импульса ударного тока, мкС
 #define PULSE_BUFFER_SIZE_V11			1000									//Количество точек в буфере формы импульса
 #define LED_PERIOD_BLINK_V11			500										//Период моргания светодиода, мС
-#define AMPLIFIRE_UNLOCK_TIME_V11		10										//Время ожидания выхода в рабочий режим аналогового регулятора
 //Дефайны для версии 2.0
 #define CHANGE_STATE_DELAY_TIME_V20		1000									//Время после импульса тока, когда блок переходит в состояние DS_WaitTimeOut
 #define SC_MIN_VALUE_V20				300										//Мнимальное значение ударного тока, Амперы
@@ -37,8 +36,8 @@
 #define PULSE_TIME_VALUE_V20			20000									//Длительность импульса ударного тока, мкС
 #define PULSE_BUFFER_SIZE_V20			(PULSE_TIME_VALUE_V20 / TIMER15_uS_V20)	//Количество точек в буфере формы импульса
 #define LED_PERIOD_BLINK_V20			250										//Период моргания светодиода, мС
-#define AMPLIFIRE_UNLOCK_TIME_V20		9										//Время ожидания выхода в рабочий режим аналогового регулятора
 //Общие дефайны
+#define AMPLIFIRE_UNLOCK_TIME			9										//Время ожидания выхода в рабочий режим аналогового регулятора
 #define MCU_FLASH_SIZE					0x7FF									//Размер FLASH памяти MCU для пользовательских задач
 #define SC_PULSE_DELAY_VALUE			60000									//Время паузы между импульсами ударного тока, мС
 #define SC_SINE_MAX_VALUE				3100									//Максимальное значение ударного тока при полусинусоидальной форме, Амперы

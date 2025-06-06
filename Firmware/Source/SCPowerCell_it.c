@@ -22,7 +22,6 @@ int Qp=0;
 long int Qi=0;
 //
 //Функции
-void WaitUnlockAMP();
 //
 
 
@@ -134,7 +133,7 @@ void EXTI4_IRQHandler(void)
 				SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
 				//
 
-				Delay_mS(AMPLIFIRE_UNLOCK_TIME_V20);
+				Delay_mS(AMPLIFIRE_UNLOCK_TIME);
 
 				//Запуск формирования синуса
 				TIM_StatusClear(TIM15);
@@ -155,7 +154,7 @@ void EXTI4_IRQHandler(void)
 			//
 
 			//Ждем выхода в рабочий режим усилителя регулятора
-			WaitUnlockAMP();
+			Delay_mS(AMPLIFIRE_UNLOCK_TIME);
 			//
 
 			//Запуск формирования синуса
@@ -229,10 +228,5 @@ void TIM7_IRQHandler(void)
 	}
 
 	TIM_StatusClear(TIM7);
-}
-
-void WaitUnlockAMP(void)
-{
-	Delay_mS(AMPLIFIRE_UNLOCK_TIME_V11);
 }
 //------------------------------------------------------------------------------
