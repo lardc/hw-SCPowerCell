@@ -19,7 +19,7 @@ int main()
 	//Проверка версии платы
 	for(int i = 6; i <= 11; i++)
 	{
-		if(DataTable[6] != 0 || DataTable[6] != 65535)
+		if(DataTable[i] != 0 && DataTable[i] != 65535)
 			CONTROL_Version = SCPC_VERSION_V20;
 	}
 
@@ -38,7 +38,7 @@ int main()
 	DAC1_Config();
 
 	//Настройка DMA для ЦАПа (только для 1.1)
-	if(CONTROL_Version == 11)
+	if(CONTROL_Version == SCPC_VERSION_V11)
 		DMA_Config();
 
 	//Настройка Timer6 для ЦАПа
@@ -146,10 +146,10 @@ void Timer7_Config(void)
 void Timer6_Config(void)
 {
 	TIM_Clock_En(TIM_6);
-	TIM_Config(TIM6, SYSCLK, (CONTROL_Version == 20 ? TIMER6_uS_V20 : TIMER6_uS_V11));
+	TIM_Config(TIM6, SYSCLK, (CONTROL_Version == SCPC_VERSION_V20 ? TIMER6_uS_V20 : TIMER6_uS_V11));
 	TIM_MasterMode(TIM6, MMS_UPDATE);
 
-	CONTROL_Version == 11 ? TIM_DMA(TIM6, DMAEN) : TIM_Start(TIM6);
+	CONTROL_Version == SCPC_VERSION_V11 ? TIM_DMA(TIM6, DMAEN) : TIM_Start(TIM6);
 }
 //------------------------------------------------------------------------------
 
@@ -157,9 +157,9 @@ void Timer6_Config(void)
 void Timer15_Config(void)
 {
 	TIM_Clock_En(TIM_15);
-	TIM_Config(TIM15, SYSCLK, (CONTROL_Version == 20 ? TIMER15_uS_V20 : TIMER15_uS_V11));
+	TIM_Config(TIM15, SYSCLK, (CONTROL_Version == SCPC_VERSION_V20 ? TIMER15_uS_V20 : TIMER15_uS_V11));
 	TIM_MasterMode(TIM15, MMS_UPDATE);
-	if(CONTROL_Version == 11)
+	if(CONTROL_Version == SCPC_VERSION_V11)
 		TIM_Start(TIM15);
 }
 //------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ void DAC1_Config(void)
 	DACx_Reset();
 	DAC_Trigger_Config(TRIG1_TIMER6, TRIG1_ENABLE);
 	DAC_Buff(BUFF1, false);
-	if(CONTROL_Version == 11)
+	if(CONTROL_Version == SCPC_VERSION_V11)
 	{
 		DACx_DMA_Config(DAC_DMA1ENABLE, DAC_DMA1UdIntDISABLE);
 		DAC_Trigger_Config(TRIG2_TIMER15, TRIG2_ENABLE);
@@ -205,7 +205,7 @@ void ADC_Init(void)
 	ADC_Calibration(ADC1);
 	ADC_SoftTrigConfig(ADC1);
 	ADC_Enable(ADC1);
-	if(CONTROL_Version == 20)
+	if(CONTROL_Version == SCPC_VERSION_V20)
 	{
 		RCC_ADC_Clk_EN(ADC_34_ClkEN);
 		ADC_Calibration(ADC3);
@@ -230,7 +230,7 @@ void SYNC_INT_Config(void)
 void UART_Config(void)
 {
   USART_Init(USART1, SYSCLK, USART_BOUDRATE);
-  USART_Recieve_Interupt(USART1, (CONTROL_Version == 20 ? 2 : 1), true);
+  USART_Recieve_Interupt(USART1, (CONTROL_Version == SCPC_VERSION_V20 ? 2 : 1), true);
 }
 //------------------------------------------------------------------------------
 

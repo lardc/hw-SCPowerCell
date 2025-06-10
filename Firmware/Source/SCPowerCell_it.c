@@ -117,7 +117,7 @@ void DMA1_Channel3_IRQHandler(void)
 //------------------------------------------------------------------------------
 void EXTI4_IRQHandler(void)
 {
-	if(CONTROL_Version == 20)
+	if(CONTROL_Version == SCPC_VERSION_V20)
 	{
 		// версия 2.0
 		if(SkipPulseCounter > 0)
@@ -199,7 +199,7 @@ void TIM7_IRQHandler(void)
 		CONTROL_TimeCounter++;
 
 		//Моргаем светодиодом
-		if(CONTROL_TimeCounter > (LED_PeriodCounter + (CONTROL_Version == 20 ? LED_PERIOD_BLINK_V20 : LED_PERIOD_BLINK_V11)))
+		if(CONTROL_TimeCounter > (LED_PeriodCounter + (CONTROL_Version == SCPC_VERSION_V20 ? LED_PERIOD_BLINK_V20 : LED_PERIOD_BLINK_V11)))
 		{
 			if(LED_STATE)
 				LED_ON;

@@ -25,7 +25,7 @@ void SurgeCurrentStart_DebugMode(void)
 //------------------------------------------------------------------------------
 void RegulatorOut_SetLow(void)
 {
-	CONTROL_Version == 20 ? DAC_CH1_SetValue(350) : DAC_CH2_SetValue(0);
+	CONTROL_Version == SCPC_VERSION_V20 ? DAC_CH1_SetValue(350) : DAC_CH2_SetValue(0);
 }
 //------------------------------------------------------------------------------
 
@@ -51,11 +51,11 @@ void SurgeCurrentConfig(void)
 	DataTable[REG_SC_PULSE_VALUE] = DEBUG_CURRENT_VALUE;
 #endif
 
-	SkipPulseCounter = CONTROL_Version == 20 ? DataTable[REG_SYNC_PULSE_COUNT] : 0;
+	SkipPulseCounter = CONTROL_Version == SCPC_VERSION_V20 ? DataTable[REG_SYNC_PULSE_COUNT] : 0;
 
 	if(DataTable[REG_WAVEFORM_TYPE] == WAVEFORM_SINE)
 	{
-		if(CONTROL_Version == 20)
+		if(CONTROL_Version == SCPC_VERSION_V20)
 		{
 			if(DataTable[REG_TEST_REGULATOR] == MODE_TEST_REG_ON)
 			{
@@ -78,7 +78,7 @@ void SurgeCurrentConfig(void)
 
 	if(DataTable[REG_WAVEFORM_TYPE] == WAVEFORM_TRAPEZE)
 	{
-		if(CONTROL_Version == 20)
+		if(CONTROL_Version == SCPC_VERSION_V20)
 		{
 			if(DataTable[REG_TEST_REGULATOR] == MODE_TEST_REG_ON)
 			{
@@ -105,7 +105,7 @@ void SurgeCurrentConfig(void)
 
 	if((!CheckDeviceState(DS_Fault)) && (!CheckDeviceState(DS_Disabled)))
 	{
-		if(CONTROL_Version == 11)
+		if(CONTROL_Version == SCPC_VERSION_V11)
 			HardwareSetup();
 		SetRegulatorOffset(DataTable[REG_SC_PULSE_VALUE]);
 		SetDeviceState(DS_PulseConfigReady);
@@ -113,35 +113,42 @@ void SurgeCurrentConfig(void)
 }
 //------------------------------------------------------------------------------
 void SineWaveFormConfig_V20(float SurgeCurrent)
-{   
-  static float DataTemp,X,X2,SurgeCurrentCorrect; 
-  Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS_V20;
+{
+	static float DataTemp, X, X2, SurgeCurrentCorrect;
+	Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS_V20;
 
-  if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
-  {
-    SurgeCurrentCorrect = SurgeCurrent;
-  }
-  else
-  {
-    //В режиме теста регулятора все калибровки не задействованы
-    float SC_Coef=((float)DataTable[REG_SC_SINE_PULSE_COEF])/1000;
-    
-    //Коррекция зависимости напряжения тока ОС и выходного тока блока
-    X = SurgeCurrent;
-    X2 = X*X;
-    SurgeCurrentCorrect = X2_GATE_SETUP_CORRECTION*X2 + X_GATE_SETUP_CORRECTION*X + Y_GATE_SETUP_CORRECTION;
-    //
-    
-    //Коррекция задания напряжения затворов
-    X = SurgeCurrent;
-    X2 = X*X;
-    SurgeCurrent = X2_FB_CORRECTION*X2 + X_FB_CORRECTION*X + Y_FB_CORRECTION;
-    SurgeCurrent = SurgeCurrent*SC_Coef;
-    //
-  }
+	if(DataTable[REG_TEST_REGULATOR] == MODE_TEST_REG_ON)
+	{
+		SurgeCurrentCorrect = SurgeCurrent;
+	}
+	else
+	{
+		//В режиме теста регулятора все калибровки не задействованы
+		float SC_Coef = ((float)DataTable[REG_SC_SINE_PULSE_COEF]) / 1000;
 
-  
-  //Построение таблицы
+		//Коррекция зависимости напряжения тока ОС и выходного тока блока
+		X = SurgeCurrent;
+		X2 = X * X;
+		SurgeCurrentCorrect = X2_GATE_SETUP_CORRECTION * X2 + X_GATE_SETUP_CORRECTION * X + Y_GATE_SETUP_CORRECTION;
+		//
+
+		//Коррекция задания напряжения затворов
+		X = SurgeCurrent;
+		X2 = X * X;
+		SurgeCurrent = X2_FB_CORRECTION * X2 + X_FB_CORRECTION * X + Y_FB_CORRECTION;
+		SurgeCurrent = SurgeCurrent * SC_Coef;
+		//
+	}
+
+	//Проверка размера буфера
+	if(BufferSizeActual > PULSE_BUFFER_SIZE_V20)
+	{
+		SetDeviceState(DS_Fault);
+		DataTable[REG_FAULT_REASON] = ERR_BUFFER_OVERFLOW;
+		return;
+	}
+
+	//Построение таблицы
 	for(int cnt = 0; cnt < BufferSizeActual; cnt++)
 	{
 		DataTemp = (float)cnt / BufferSizeActual;
@@ -255,7 +262,7 @@ void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
 	float DataTemp;
 	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
 
-	for(volatile int cnt = 0; cnt < (PULSE_BUFFER_SIZE_V11 - 2); cnt++)
+	for(int cnt = 0; cnt < (PULSE_BUFFER_SIZE_V11 - 2); cnt++)
 	{
 		DataTemp = (float)cnt / (PULSE_BUFFER_SIZE_V11 - 2);
 		DataTemp = sin(3.1416 * DataTemp);
@@ -299,7 +306,7 @@ void TrapezeWaveFormConfig_V11(uint16_t SurgeCurrent)
 	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
 
 	//Формируем наростающий фронт трапеции
-	for(volatile int cnt = 0; cnt < EdgePointsCounter; cnt++)
+	for(int cnt = 0; cnt < EdgePointsCounter; cnt++)
 	{
 		DataTemp = ((float)cnt) / EdgePointsCounter;
 		PulseDataBuffer_V11[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
@@ -313,7 +320,7 @@ void TrapezeWaveFormConfig_V11(uint16_t SurgeCurrent)
 	//
 
 	//Формируем основной импульс трапеции
-	for(volatile int cnt = (int)EdgePointsCounter; cnt < (int)(EdgePointsCounter + PulsePointsCounter); cnt++)
+	for(int cnt = (int)EdgePointsCounter; cnt < (int)(EdgePointsCounter + PulsePointsCounter); cnt++)
 	{
 		PulseDataBuffer_V11[cnt] = (uint16_t)(SurgeCurrent * SC_Coef);
 		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
@@ -326,7 +333,7 @@ void TrapezeWaveFormConfig_V11(uint16_t SurgeCurrent)
 	//
 
 	//Формируем спадающий фронт трапеции
-	for(volatile int cnt = 0; cnt < (int)EdgePointsCounter; cnt++)
+	for(int cnt = 0; cnt < (int)EdgePointsCounter; cnt++)
 	{
 		DataTemp = 1.0 - ((float)cnt) / EdgePointsCounter;
 		PulseDataBuffer_V11[(int)(EdgePointsCounter + PulsePointsCounter + cnt)] = (uint16_t)(DataTemp * SurgeCurrent

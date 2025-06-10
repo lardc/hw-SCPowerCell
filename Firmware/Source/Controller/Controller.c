@@ -53,8 +53,8 @@ void CONTROL_Init()
 	DEVPROFILE_ResetControlSection();
 	// Инициализация device profile
 	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
-	DEVPROFILE_InitEPService(EPIndexes, (CONTROL_Version == 20 ? EPSized_V20 : EPSized_V11), EPCounters,
-				(CONTROL_Version == 20 ? EPDatas_V20 : EPDatas_V11));
+	DEVPROFILE_InitEPService(EPIndexes, (CONTROL_Version == SCPC_VERSION_V20 ? EPSized_V20 : EPSized_V11), EPCounters,
+				(CONTROL_Version == SCPC_VERSION_V20 ? EPDatas_V20 : EPDatas_V11));
 	// Сброс значений
 	DEVPROFILE_ResetControlSection();
 
@@ -190,9 +190,7 @@ void DebugModeInit(void)
 //---------------------Процесс заряда батареи-----------------------------------
 void BatChargeProcess(void)
 {
-	uint16_t Threshold = DataTable[REG_BAT_VOLTAGE_THRESHOLD];
-
-	if(DataTable[REG_BAT_VOLTAGE] >= Threshold)
+	if(DataTable[REG_BAT_VOLTAGE] >= DataTable[REG_BAT_VOLTAGE_THRESHOLD])
 	{
 		if(CheckDeviceState(DS_WaitTimeOut) && (CONTROL_TimeCounter >= (SC_DelayCounter + SC_PULSE_DELAY_VALUE)))
 		{
@@ -206,7 +204,7 @@ void BatChargeProcess(void)
 	}
 	//Через 5 сек после импульса меняем состояние на DS_WaitTimeOut
 	if(CheckDeviceState(DS_PulseEnd)&& (CONTROL_TimeCounter >= (SC_DelayCounter +
-							(CONTROL_Version == 20 ? CHANGE_STATE_DELAY_TIME_V20 : CHANGE_STATE_DELAY_TIME_V11))))
+							(CONTROL_Version == SCPC_VERSION_V20 ? CHANGE_STATE_DELAY_TIME_V20 : CHANGE_STATE_DELAY_TIME_V11))))
 	{
 		SetDeviceState(DS_WaitTimeOut);
 	}
