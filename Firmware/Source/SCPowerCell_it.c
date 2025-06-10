@@ -117,34 +117,11 @@ void DMA1_Channel3_IRQHandler(void)
 //------------------------------------------------------------------------------
 void EXTI4_IRQHandler(void)
 {
-	if(CONTROL_Version == SCPC_VERSION_V20)
+	if(SkipPulseCounter > 1) // Формироване происходит на первом импульсе
 	{
-		// версия 2.0
-		if(SkipPulseCounter > 0)
-		{
-			SkipPulseCounter--;
-		}
-		else
-		{
-			if(CheckDeviceState(DS_PulseConfigReady))
-			{
-				SetDeviceState(DS_PulseStart);
-				//
-				SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
-				//
-
-				Delay_mS(AMPLIFIRE_UNLOCK_TIME);
-
-				//Запуск формирования синуса
-				TIM_StatusClear(TIM15);
-				TIM_Start(TIM15);
-				TIM_Reset(TIM15);
-				//
-			}
-
-		}
+		SkipPulseCounter--;
 	}
-	else // версия 1.1
+	else
 	{
 		if(CheckDeviceState(DS_PulseConfigReady))
 		{
@@ -152,19 +129,24 @@ void EXTI4_IRQHandler(void)
 			//
 			SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
 			//
-
-			//Ждем выхода в рабочий режим усилителя регулятора
 			Delay_mS(AMPLIFIRE_UNLOCK_TIME);
 			//
-
-			//Запуск формирования синуса
-			TIM_StatusClear(TIM6);
-			TIM_Start(TIM6);
-			TIM_Reset(TIM6);
-			//
+			if(CONTROL_Version == SCPC_VERSION_V20)
+			{
+				//Запуск формирования синуса для версии 2.0
+				TIM_StatusClear(TIM15);
+				TIM_Start(TIM15);
+				TIM_Reset(TIM15);
+			}
+			else
+			{
+				//Запуск формирования синуса для версии 1.1
+				TIM_StatusClear(TIM6);
+				TIM_Start(TIM6);
+				TIM_Reset(TIM6);
+			}
 		}
 	}
-
 	EXTI_FlagReset(EXTI_4);
 }
 //------------------------------------------------------------------------------

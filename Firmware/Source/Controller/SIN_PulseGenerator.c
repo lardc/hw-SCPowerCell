@@ -51,7 +51,7 @@ void SurgeCurrentConfig(void)
 	DataTable[REG_SC_PULSE_VALUE] = DEBUG_CURRENT_VALUE;
 #endif
 
-	SkipPulseCounter = CONTROL_Version == SCPC_VERSION_V20 ? DataTable[REG_SYNC_PULSE_COUNT] : 0;
+	SkipPulseCounter = DataTable[REG_SYNC_PULSE_COUNT];
 
 	if(DataTable[REG_WAVEFORM_TYPE] == WAVEFORM_SINE)
 	{
@@ -261,10 +261,19 @@ void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
 {
 	float DataTemp;
 	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
+	Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER6_uS_V11;
 
-	for(int cnt = 0; cnt < (PULSE_BUFFER_SIZE_V11 - 2); cnt++)
+	//Проверка размера буфера
+	if(BufferSizeActual > PULSE_BUFFER_SIZE_V11)
 	{
-		DataTemp = (float)cnt / (PULSE_BUFFER_SIZE_V11 - 2);
+		SetDeviceState(DS_Fault);
+		DataTable[REG_FAULT_REASON] = ERR_BUFFER_OVERFLOW;
+		return;
+	}
+
+	for(int cnt = 0; cnt < (BufferSizeActual - 2); cnt++)
+	{
+		DataTemp = (float)cnt / (BufferSizeActual - 2);
 		DataTemp = sin(3.1416 * DataTemp);
 		PulseDataBuffer_V11[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
 		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
@@ -274,10 +283,10 @@ void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
 		DataTemp = PulseDataBuffer_V11[cnt];
 		CONTROL_Values_Pulse_V11[cnt] = (uint16_t)DataTemp;
 	}
-	PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11 - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
-	PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11 - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
-	CONTROL_Values_Pulse_V11[PULSE_BUFFER_SIZE_V11 - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
-	CONTROL_Values_Pulse_V11[PULSE_BUFFER_SIZE_V11 - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer_V11[BufferSizeActual - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	PulseDataBuffer_V11[BufferSizeActual - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse_V11[BufferSizeActual - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
+	CONTROL_Values_Pulse_V11[BufferSizeActual - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
 
 	CONTROL_Values_Pulse_Counter = EP_SIZE_V11;
 }

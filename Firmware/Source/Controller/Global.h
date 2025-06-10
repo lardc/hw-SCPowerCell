@@ -27,7 +27,7 @@
 #define SC_MIN_VALUE_V11				0										//Мнимальное значение ударного тока, Амперы
 #define SC_TRAPEZE_MAX_VALUE_V11		1500									//Максимальное значение ударного тока при трапецеидальной форме, Амперы
 #define PULSE_TIME_VALUE_V11			(TIMER6_uS_V11 * PULSE_BUFFER_SIZE_V11)	//Длительность импульса ударного тока, мкС
-#define PULSE_BUFFER_SIZE_V11			1000									//Количество точек в буфере формы импульса
+#define PULSE_BUFFER_SIZE_V11			2000									//Количество точек в буфере формы импульса
 #define LED_PERIOD_BLINK_V11			500										//Период моргания светодиода, мС
 //Дефайны для версии 2.0
 #define CHANGE_STATE_DELAY_TIME_V20		1000									//Время после импульса тока, когда блок переходит в состояние DS_WaitTimeOut
