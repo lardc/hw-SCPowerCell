@@ -27,7 +27,7 @@ typedef void (*FUNC_AsyncDelegate)();
 
 // Variables
 //
-Int64U CONTROL_TimeCounter = 0;
+volatile Int64U CONTROL_TimeCounter = 0;
 static Boolean CycleActive = FALSE;
 Int16U CONTROL_Values_Pulse_V20[VALUES_x_SIZE_V20];
 Int16U CONTROL_Values_Pulse_V11[VALUES_x_SIZE_V11];
@@ -190,7 +190,7 @@ void DebugModeInit(void)
 //---------------------Процесс заряда батареи-----------------------------------
 void BatChargeProcess(void)
 {
-	if(DataTable[REG_BAT_VOLTAGE] >= DataTable[REG_BAT_VOLTAGE_THRESHOLD])
+	if(DataTable[REG_BAT_VOLTAGE] >= (DataTable[REG_BAT_VOLTAGE_THRESHOLD]*10))
 	{
 		if(CheckDeviceState(DS_WaitTimeOut) && (CONTROL_TimeCounter >= (SC_DelayCounter + SC_PULSE_DELAY_VALUE)))
 		{
@@ -204,7 +204,7 @@ void BatChargeProcess(void)
 	}
 	//Через 5 сек после импульса меняем состояние на DS_WaitTimeOut
 	if(CheckDeviceState(DS_PulseEnd)&& (CONTROL_TimeCounter >= (SC_DelayCounter +
-							(CONTROL_Version == SCPC_VERSION_V20 ? CHANGE_STATE_DELAY_TIME_V20 : CHANGE_STATE_DELAY_TIME_V11))))
+							(CONTROL_Version == SCPC_VERSION_V20 ? CHANGE_STATE_DELAY_TIME_V20 : CHANGE_STATE_DELAY_TIME_V20))))//CHANGE_STATE_DELAY_TIME_V11))))
 	{
 		SetDeviceState(DS_WaitTimeOut);
 	}
@@ -213,17 +213,6 @@ void BatChargeProcess(void)
 }
 //------------------------------------------------------------------------------
 
-void Delay_mS(uint64_t Delay)
-{
-  TIM_Reset(TIM7);
-  
-  uint64_t Counter = CONTROL_TimeCounter;
-  
-  while(CONTROL_TimeCounter<(Counter+Delay)){}
-}
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 void IWDG_Control(void)
 {
 	if(BOOT_LOADER_VARIABLE != BOOT_LOADER_REQUEST)

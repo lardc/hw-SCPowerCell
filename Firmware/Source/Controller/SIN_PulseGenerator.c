@@ -1,7 +1,7 @@
 ﻿#include "SIN_PulseGenerator.h"
 
 // Variables
-volatile Int16U SkipPulseCounter = 0;
+Int16U SkipPulseCounter = 0;
 
 //-------------Старт формирования ударного тока в отладочном режиме-------------
 #ifdef DEBUG_MODE
@@ -372,7 +372,8 @@ void HardwareSetup(void)
 	TIM_StatusClear(TIM6);
 	TIM_Start(TIM6);
 	TIM_Reset(TIM6);
-	while(!CheckDeviceState(DS_PulseEnd)){}
+	while(!CheckDeviceState(DS_PulseEnd))
+		IWDG_Refresh();
 
 	SetDeviceState(DS_Ready);
 }

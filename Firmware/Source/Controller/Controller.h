@@ -20,7 +20,7 @@
 
 // Переменные
 //
-extern Int64U CONTROL_TimeCounter;
+extern volatile Int64U CONTROL_TimeCounter;
 
 extern Int16U CONTROL_Values_Pulse_V20[VALUES_x_SIZE_V20];
 extern Int16U CONTROL_Values_Pulse_V11[VALUES_x_SIZE_V11];

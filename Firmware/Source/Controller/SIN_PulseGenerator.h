@@ -22,7 +22,7 @@
 #define Y_GATE_SETUP_CORRECTION         217.396
 
 //Variables
-extern volatile Int16U SkipPulseCounter;
+extern Int16U SkipPulseCounter;
 
 void SetRegulatorOffset(uint32_t CurrentValue);									//Установка offset пунулятора в зависимости от тока
 void SurgeCurrentStart_DebugMode(void);											//Старт формированию импульса тока в режиме Debug

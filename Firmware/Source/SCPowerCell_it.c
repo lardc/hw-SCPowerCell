@@ -12,6 +12,7 @@
 #include "ZwADC.h"
 #include "ZwSCI.h"
 #include "SIN_PulseGenerator.h"
+#include "Delay.h"
 //
 
 //Variables
@@ -97,7 +98,7 @@ void ADC3_IRQHandler(void)
 //------------------------------Прерывание по DMA только для версии 1.1-----------------------------------------
 void DMA1_Channel3_IRQHandler(void)
 {
-	if(DMA_TransferCompleteCheck(DMA_ISR_TCIF3))
+	if(DMA_IsTransferComplete(DMA1, DMA_ISR_TCIF3))
 	{
 		TIM_Stop(TIM6);
 
@@ -109,7 +110,7 @@ void DMA1_Channel3_IRQHandler(void)
 
 		SC_DelayCounter = CONTROL_TimeCounter;
 
-		DMA_TransferCompleteFlagReset(DMA_IFCR_CTCIF3);
+		DMA_TransferCompleteReset(DMA1, DMA_IFCR_CTCIF3);
 	}
 }
 //------------------------------------------------------------------------------
@@ -129,7 +130,7 @@ void EXTI4_IRQHandler(void)
 			//
 			SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
 			//
-			Delay_mS(AMPLIFIRE_UNLOCK_TIME);
+			DELAY_MS(AMPLIFIRE_UNLOCK_TIME);
 			//
 			if(CONTROL_Version == SCPC_VERSION_V20)
 			{

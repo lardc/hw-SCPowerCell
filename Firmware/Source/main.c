@@ -177,14 +177,22 @@ void DAC1_Config(void)
 		DAC_Trigger_Config(TRIG2_TIMER15, TRIG2_ENABLE);
 		DACx_Enable(DAC2ENABLE);
 	}
-	else
-		DACx_Enable(DAC1ENABLE);
+	DACx_Enable(DAC1ENABLE);
 }
 //------------------------------------------------------------------------------
 
 //----------------------------DMA config(только для 1.1)------------------------
 void DMA_Config()
 {
+	/*DMA_Clk_Enable(DMA1_ClkEN);
+	DMA_Clk_Enable(DMA2_ClkEN);
+
+	DMA_Reset(DMA_ADC_ID_CH);
+	DMA_Interrupt(DMA_ADC_ID_CH, DMA_TRANSFER_COMPLETE, 0, true);
+	DMAChannelX_DataConfig(DMA_ADC_ID_CH, (Int32U)(&MEMBUF_DMA_Id[0]), (Int32U)(&ADC4->DR), VALUES_POWER_DMA_SIZE);
+	DMAChannelX_Config(DMA_ADC_ID_CH, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_32BIT, DMA_PSIZE_16BIT,
+			DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_DIS, DMA_READ_FROM_PERIPH);*/
+
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 	SYSCFG->CFGR1 |= SYSCFG_CFGR1_TIM6DAC1Ch1_DMA_RMP;
 

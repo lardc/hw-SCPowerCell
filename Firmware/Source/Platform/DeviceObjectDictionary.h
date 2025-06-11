@@ -7,7 +7,7 @@
 
 //ACTIONS
 //
-#define ACT_DS_NONE						1                               //Переход в состояние ожидания
+#define ACT_DS_NONE								1                               //Переход в состояние ожидания
 #define ACT_BAT_START_CHARGE                    2                               //Команда блоку SCPowerCell на заряд батареи конденсаторов
 #define ACT_FAULT_CLEAR                         3                               //Очистка fault
 #define ACT_WARNING_CLEAR                       4                               //Очистка warning
