@@ -37,10 +37,6 @@ int main()
 	//Настройка ЦАПа
 	DAC1_Config();
 
-	//Настройка DMA для ЦАПа (только для 1.1)
-	if(CONTROL_Version == SCPC_VERSION_V11)
-		DMA_Config();
-
 	//Настройка Timer6 для ЦАПа
 	Timer6_Config();
 
@@ -178,31 +174,6 @@ void DAC1_Config(void)
 		DACx_Enable(DAC2ENABLE);
 	}
 	DACx_Enable(DAC1ENABLE);
-}
-//------------------------------------------------------------------------------
-
-//----------------------------DMA config(только для 1.1)------------------------
-void DMA_Config()
-{
-	/*DMA_Clk_Enable(DMA1_ClkEN);
-	DMA_Clk_Enable(DMA2_ClkEN);
-
-	DMA_Reset(DMA_ADC_ID_CH);
-	DMA_Interrupt(DMA_ADC_ID_CH, DMA_TRANSFER_COMPLETE, 0, true);
-	DMAChannelX_DataConfig(DMA_ADC_ID_CH, (Int32U)(&MEMBUF_DMA_Id[0]), (Int32U)(&ADC4->DR), VALUES_POWER_DMA_SIZE);
-	DMAChannelX_Config(DMA_ADC_ID_CH, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_32BIT, DMA_PSIZE_16BIT,
-			DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_DIS, DMA_READ_FROM_PERIPH);*/
-
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-	SYSCFG->CFGR1 |= SYSCFG_CFGR1_TIM6DAC1Ch1_DMA_RMP;
-
-	DMA_Clk_Enable(DMA_ClkEN);
-	DMA_Reset(DMA1_Channel3);
-	DMA_Interrupt(DMA1_Channel3, DMA_TRANSFER_COMPLETE, 2, true);
-	DMA1ChannelX_DataConfig(DMA1_Channel3, (uint32_t)(&PulseDataBuffer_V11[0]), (uint32_t)(&DAC->DHR12R1),
-			PULSE_BUFFER_SIZE_V11);
-	DMA1ChannelX_Config(DMA1_Channel3, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
-	DMA_MINC_EN, false, DMA_CIRCMODE_EN, DMA_READ_FROM_MEM, DMA_CHANNEL_EN);
 }
 //------------------------------------------------------------------------------
 

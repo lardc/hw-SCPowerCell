@@ -118,7 +118,7 @@ void DMA1_Channel3_IRQHandler(void)
 //------------------------------------------------------------------------------
 void EXTI4_IRQHandler(void)
 {
-	if(SkipPulseCounter > 1) // Формироване происходит на первом импульсе
+	if(SkipPulseCounter > 1) // Формироване происходит по счету 1
 	{
 		SkipPulseCounter--;
 	}

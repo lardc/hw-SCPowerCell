@@ -2,6 +2,8 @@
 
 // Variables
 Int16U SkipPulseCounter = 0;
+// Forward functions
+void SIN_DMAConfig(uint16_t Size);
 
 //-------------Старт формирования ударного тока в отладочном режиме-------------
 #ifdef DEBUG_MODE
@@ -257,11 +259,15 @@ void TrapezeWaveFormConfig_V20(float SurgeCurrent)
   //
 }
 //------------------------------------------------------------------------------
+
 void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
 {
 	float DataTemp;
 	float SC_Coef = ((float)DataTable[REG_SC_PULSE_COEF]) / 1000;
 	Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER6_uS_V11;
+
+	// Перенастройка DMA под определенную длину
+	SIN_DMAConfig(BufferSizeActual);
 
 	//Проверка размера буфера
 	if(BufferSizeActual > PULSE_BUFFER_SIZE_V11)
@@ -273,8 +279,8 @@ void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
 
 	for(int cnt = 0; cnt < (BufferSizeActual - 2); cnt++)
 	{
-		DataTemp = (float)cnt / (BufferSizeActual - 2);
-		DataTemp = sin(3.1416 * DataTemp);
+		DataTemp = (float) cnt / (BufferSizeActual - 2);
+		DataTemp = sinf(3.1416 * DataTemp);
 		PulseDataBuffer_V11[cnt] = (uint16_t)(DataTemp * SurgeCurrent * SC_Coef);
 		DataTemp = DataTable[REG_PULSE_OFFSET_VALUE];
 		PulseDataBuffer_V11[cnt] += (uint16_t)DataTemp;
@@ -288,7 +294,7 @@ void SineWaveFormConfig_V11(uint16_t SurgeCurrent)
 	CONTROL_Values_Pulse_V11[BufferSizeActual - 2] = DataTable[REG_PULSE_OFFSET_VALUE];
 	CONTROL_Values_Pulse_V11[BufferSizeActual - 1] = DataTable[REG_PULSE_OFFSET_VALUE];
 
-	CONTROL_Values_Pulse_Counter = EP_SIZE_V11;
+	CONTROL_Values_Pulse_Counter = BufferSizeActual;
 }
 //------------------------------------------------------------------------------
 
@@ -376,5 +382,21 @@ void HardwareSetup(void)
 		IWDG_Refresh();
 
 	SetDeviceState(DS_Ready);
+}
+//------------------------------------------------------------------------------
+
+//------------------------------Конфигурация DMA нужна только для версии 1.1----
+void SIN_DMAConfig(uint16_t Size)
+{
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+	SYSCFG->CFGR1 |= SYSCFG_CFGR1_TIM6DAC1Ch1_DMA_RMP;
+
+	DMA_Clk_Enable(DMA_ClkEN);
+	DMA_Reset(DMA1_Channel3);
+	DMA_Interrupt(DMA1_Channel3, DMA_TRANSFER_COMPLETE, 2, true);
+	DMA1ChannelX_DataConfig(DMA1_Channel3, (uint32_t)(&PulseDataBuffer_V11[0]), (uint32_t)(&DAC->DHR12R1),
+			Size);
+	DMA1ChannelX_Config(DMA1_Channel3, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
+	DMA_MINC_EN, false, DMA_CIRCMODE_EN, DMA_READ_FROM_MEM, DMA_CHANNEL_EN);
 }
 //------------------------------------------------------------------------------

@@ -39,14 +39,14 @@
 //Общие дефайны
 #define AMPLIFIRE_UNLOCK_TIME			9										//Время ожидания выхода в рабочий режим аналогового регулятора
 #define MCU_FLASH_SIZE					0x7FF									//Размер FLASH памяти MCU для пользовательских задач
-#define SC_PULSE_DELAY_VALUE			6000									//Время паузы между импульсами ударного тока, мС
+#define SC_PULSE_DELAY_VALUE			60000									//Время паузы между импульсами ударного тока, мС
 #define SC_SINE_MAX_VALUE				3100									//Максимальное значение ударного тока при полусинусоидальной форме, Амперы
 #define TRAPEZE_EDGE_TIME_MIN			100										//Минимальное фремя фронта трапеции, мкС
 #define TRAPEZE_EDGE_TIME_MAX			1000									//Максимальное фремя фронта трапеции, мкС
 #define BATTERY_THRESHOLD_MAX			90										//Максимальный порог заряда конденсаторов, Вольт
 #define PULSE_OFFSET_MAX				2500									//Максимальное значение смещения сигнала импульса (с ЦАПа)
 #define REGULATOR_OFFSET_MAX			4095									//Максимальное значение смещения регулятора
-#define SYNC_LINE_HIGHSTATE_TIMEOUT		25										//Таймаут пребывания линии синхронизации в высоком состоянии
+#define SYNC_LINE_HIGHSTATE_TIMEOUT		65										//Таймаут пребывания линии синхронизации в высоком состоянии
 #define SC_MEASURE_COEF					0.91									//Коэффициент пропорц-ти измерения тока
 #define DAC_MAX_LEVEL					3800									//Ограничение максимального значения ЦАПа
 //------------------------------------------------
@@ -82,8 +82,7 @@ extern uint16_t ValueCurrentTable;
 extern int PulseDataBuffer_V20[PULSE_BUFFER_SIZE_V20];
 extern int PulseDataSetUp_V20[PULSE_BUFFER_SIZE_V20];
 
-extern int PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11];
-extern int PulseDataSetUp_V11[PULSE_BUFFER_SIZE_V11];
+extern uint16_t PulseDataBuffer_V11[PULSE_BUFFER_SIZE_V11];
 
 extern uint64_t LED_PeriodCounter;
 extern uint64_t SyncLine_TimeOutCounter;
