@@ -168,6 +168,9 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 		case ACT_SAVE_DT_TO_FLASH:
 		{
 			DT_SaveNVPartToEPROM();
+			uint32_t Temp = 0x3333;
+			NFLASH_Unlock();
+			NFLASH_WriteArray16(ADDRESS_FLASH_START_MCU, &Temp, 1);
 			break;
 		}
 
