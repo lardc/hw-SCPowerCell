@@ -15,6 +15,7 @@
 #include "ZwSCI.h"
 #include "BCCIMHighLevel.h"
 #include "BCCIMaster.h"
+#include "ZwNFLASH.h"
 
 // Types
 //
@@ -157,8 +158,18 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 	switch(ActionID)
 	{
 		case ACT_RESET_FOR_PROGRAMMING:
-			BOOT_LOADER_VARIABLE = BOOT_LOADER_REQUEST;
+		{
+			uint32_t Temp = FLAG_RESET_FOR_PROG;
+			NFLASH_Unlock();
+			NFLASH_WriteArray32(ADDRESS_FLAG_REGISTER, &Temp, 1);
 			break;
+		}
+
+		case ACT_SAVE_DT_TO_FLASH:
+		{
+			DT_SaveNVPartToEPROM();
+			break;
+		}
 
 		default:
 			return (ControllerDispatchFunction) ? ControllerDispatchFunction(ActionID, UserError) : FALSE;

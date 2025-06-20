@@ -2,6 +2,9 @@
 #include "BCCIxParams.h"
 #include "DataTable.h"
 
+//Forward functions
+void NFLASH_WriteDTShifted(uint32_t EPROMAddress, uint16_t* Buffer, uint16_t BufferSize);
+
 int main()
 {
 	SetVectorTable();
@@ -10,7 +13,7 @@ int main()
 	SysClk_Config();
 
 	// Конфигурация сервиса работы DataTable и EPROM
-	EPROMServiceConfig EPROMService = { (FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT };
+	EPROMServiceConfig EPROMService = { (FUNC_EPROM_WriteValues)&NFLASH_WriteDTShifted, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
 
 	// Инициализация DataTable
 	DT_Init(EPROMService, false);
@@ -219,5 +222,17 @@ void SetVectorTable()
 	__disable_irq();
 	SCB->VTOR = (uint32_t)BOOT_LOADER_MAIN_PR_ADDR;
 	__enable_irq();
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void NFLASH_WriteDTShifted(uint32_t EPROMAddress, uint16_t* Buffer, uint16_t BufferSize)
+{
+	// Prepare flash
+	NFLASH_Unlock();
+	NFLASH_ErasePages(EPROMAddress, EPROMAddress + FLASH_PAGE_SIZE);
+
+	// Write data
+	NFLASH_WriteArray16(EPROMAddress + 2, Buffer, BufferSize);
 }
 //------------------------------------------------------------------------------

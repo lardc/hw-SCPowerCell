@@ -120,11 +120,6 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
         break;
       }
 
-    case ACT_SAVE_DT_TO_FLASH:
-      {
-        DT_SaveNVPartToEPROM();
-        break;
-      }
     case ACT_RESTORE_DT_FROM_FLASH:
       {
         DT_RestoreNVPartFromEPROM();

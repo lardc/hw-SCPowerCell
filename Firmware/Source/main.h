@@ -39,4 +39,5 @@ void Timer3_Config(void);
 void UART_Config(void);
 void WatchDog_Config(void);
 void SetVectorTable();
+void NFLASH_WriteDT(uint32_t EPROMAddress, uint16_t* Buffer, uint16_t BufferSize);
 #endif //__MAIN_H
