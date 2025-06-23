@@ -159,9 +159,8 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 	{
 		case ACT_RESET_FOR_PROGRAMMING:
 		{
-			uint32_t Temp = FLAG_RESET_FOR_PROG;
-			NFLASH_Unlock();
-			NFLASH_WriteArray32(ADDRESS_FLAG_REGISTER, &Temp, 1);
+			volatile pInt32U FlagPointer = (volatile pInt32U)ADDRESS_FLAG_REGISTER;
+			*FlagPointer = FLAG_RESET_FOR_PROG;
 			break;
 		}
 

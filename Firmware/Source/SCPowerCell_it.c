@@ -66,7 +66,7 @@ void ADC3_IRQHandler(void)
     {
       CONTROL_Values_Pulse_V20[PulseCounter]=(Int16U)RegulatorError;
     }
-    CONTROL_Values_Pulse_Counter=EP_SIZE_V20;
+
     //
 
     if(RegulatorOut>DAC_MAX_LEVEL)RegulatorOut=DAC_MAX_LEVEL;
@@ -81,6 +81,7 @@ void ADC3_IRQHandler(void)
     if(PulseCounter>BufferSizeActual)
     {
       SYNC_LINE_HIGH;
+      CONTROL_Values_Pulse_Counter = BufferSizeActual;
       SetDeviceState(DS_PulseEnd);
       RegulatorOut_SetLow();
       SC_DelayCounter = CONTROL_TimeCounter;
@@ -136,6 +137,7 @@ void EXTI4_IRQHandler(void)
 			{
 				//Запуск формирования синуса для версии 2.0
 				TIM_StatusClear(TIM15);
+				ADC_SamplingStart(ADC3);
 				TIM_Start(TIM15);
 				TIM_Reset(TIM15);
 			}
@@ -203,11 +205,8 @@ void TIM7_IRQHandler(void)
 				DataTable[REG_DISABLE_REASON] = ERR_SYNC_TIMEOUT;
 			}
 			else
-			{
 				SyncLine_TimeOutCounter = 0;
-			}
 		}
-		//
 	}
 
 	TIM_StatusClear(TIM7);
