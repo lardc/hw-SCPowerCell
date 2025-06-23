@@ -185,7 +185,7 @@ void DebugModeInit(void)
 //---------------------Процесс заряда батареи-----------------------------------
 void BatChargeProcess(void)
 {
-	if(DataTable[REG_BAT_VOLTAGE] >= (DataTable[REG_BAT_VOLTAGE_THRESHOLD]*10))
+	if(DataTable[REG_BAT_VOLTAGE] >= (DataTable[REG_BAT_VOLTAGE_THRESHOLD]))
 	{
 		if(CheckDeviceState(DS_WaitTimeOut) && (CONTROL_TimeCounter >= (SC_DelayCounter + SC_PULSE_DELAY_VALUE)))
 		{

@@ -27,7 +27,7 @@ int main()
 	}
 
 	if(CONTROL_Version == 0)
-			CONTROL_Version = SCPC_VERSION_V11;
+		CONTROL_Version = SCPC_VERSION_V11;
 
 	//Настройка портов ввода/вывода
 	IO_Config();
