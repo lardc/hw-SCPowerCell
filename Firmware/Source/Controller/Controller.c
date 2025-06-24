@@ -185,7 +185,7 @@ void DebugModeInit(void)
 //---------------------Процесс заряда батареи-----------------------------------
 void BatChargeProcess(void)
 {
-	if(DataTable[REG_BAT_VOLTAGE] >= (DataTable[REG_BAT_VOLTAGE_THRESHOLD]))
+	if(DataTable[REG_BAT_VOLTAGE] >= DataTable[REG_BAT_VOLTAGE_THRESHOLD])
 	{
 		if(CheckDeviceState(DS_WaitTimeOut) && (CONTROL_TimeCounter >= (SC_DelayCounter + SC_PULSE_DELAY_VALUE)))
 		{
@@ -198,11 +198,9 @@ void BatChargeProcess(void)
 		}
 	}
 	//Через 5 сек после импульса меняем состояние на DS_WaitTimeOut
-	if(CheckDeviceState(DS_PulseEnd)&& (CONTROL_TimeCounter >= (SC_DelayCounter +
-							(CONTROL_Version == SCPC_VERSION_V20 ? CHANGE_STATE_DELAY_TIME_V20 : CHANGE_STATE_DELAY_TIME_V20))))//CHANGE_STATE_DELAY_TIME_V11))))
-	{
-		SetDeviceState(DS_WaitTimeOut);
-	}
+	if(CheckDeviceState(DS_PulseEnd))
+		if(CONTROL_TimeCounter >= (SC_DelayCounter +(CONTROL_Version == SCPC_VERSION_V20 ? CHANGE_STATE_DELAY_TIME_V20 : CHANGE_STATE_DELAY_TIME_V11)))
+				SetDeviceState(DS_WaitTimeOut);
 
 	DataTable[REG_BAT_VOLTAGE] = (uint16_t)(ADC_Measure(ADC1, 4) * ((float)DataTable[REG_BAT_VOLTAGE_COEF]) / 1000); //Сохраняем в память в формате [Вольт/10]
 }

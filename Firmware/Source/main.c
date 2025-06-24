@@ -37,9 +37,9 @@ int main()
 	// Инициализация функций связанных с CAN NodeID
 	Int16U NodeID = 0;
 	if(DataTable[REG_CFG_NODE_ID] == 0 || DataTable[REG_CFG_NODE_ID] == 65535)
-		NodeID = DataTable[REG_CFG_NODE_ID] ? DataTable[REG_CFG_NODE_ID] : CAN_SLAVE_NID;
-	else
 		NodeID = CAN_SLAVE_NID;
+	else
+		NodeID = DataTable[REG_CFG_NODE_ID];
 
 	DT_SaveFirmwareInfo(NodeID, 0);
 	CAN_Config(NodeID);
@@ -240,10 +240,10 @@ void NFLASH_WriteDTShifted(uint32_t EPROMAddress, uint16_t* Buffer, uint16_t Buf
 	NFLASH_Unlock();
 	NFLASH_ErasePages(EPROMAddress, EPROMAddress + FLASH_PAGE_SIZE);
 
-	// Write data
+	// Запись данных сдвинута на 2 байта для сохранения в памяти значения флага
 	NFLASH_WriteArray16(EPROMAddress + 2, Buffer, BufferSize);
 
-	// Выставление флага загрузки прошивки
+	// Выставление флага загрузки прошивки после стирания
 	uint16_t Temp = FLAG_LOAD_MAIN;
 	NFLASH_WriteArray16(ADDRESS_FLASH_START_MCU, &Temp, 1);
 }
