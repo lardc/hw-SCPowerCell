@@ -236,7 +236,7 @@ void NFLASH_WriteDTShifted(uint32_t EPROMAddress, uint16_t* Buffer, uint16_t Buf
 	NFLASH_WriteArray16(EPROMAddress + 2, Buffer, BufferSize);
 
 	// Выставление флага загрузки прошивки
-	uint16_t Temp = FLAG_RESET;
+	uint16_t Temp = FLAG_LOAD_MAIN;
 	NFLASH_WriteArray16(ADDRESS_FLASH_START_MCU, &Temp, 1);
 }
 //------------------------------------------------------------------------------

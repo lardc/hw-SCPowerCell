@@ -159,7 +159,7 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 	{
 		case ACT_RESET_FOR_PROGRAMMING:
 		{
-			volatile pInt32U FlagPointer = (volatile pInt32U)ADDRESS_FLAG_REGISTER;
+			volatile pInt16U FlagPointer = (volatile pInt16U)ADDRESS_FLAG_REGISTER;
 			*FlagPointer = FLAG_RESET_FOR_PROG;
 			break;
 		}
@@ -167,6 +167,13 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 		case ACT_SAVE_DT_TO_FLASH:
 		{
 			DT_SaveNVPartToEPROM();
+			break;
+		}
+
+		case ACT_RESET_DEVICE:
+		{
+			volatile pInt16U FlagPointer = (volatile pInt16U)ADDRESS_FLAG_REGISTER;
+			*FlagPointer = FLAG_RESET;
 			break;
 		}
 
