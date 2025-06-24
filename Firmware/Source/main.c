@@ -17,7 +17,6 @@ int main()
 
 	// Инициализация DataTable
 	DT_Init(EPROMService, false);
-	DT_SaveFirmwareInfo(CAN_SLAVE_NID, 0);
 
 	//Проверка версии платы
 	for(int i = 6; i <= 11; i++)
@@ -35,7 +34,15 @@ int main()
 	//UART configure
 	UART_Config();
 
-	CAN_Config();
+	// Инициализация функций связанных с CAN NodeID
+	Int16U NodeID = 0;
+	if(DataTable[REG_CFG_NODE_ID] == 0 || DataTable[REG_CFG_NODE_ID] == 65535)
+		NodeID = DataTable[REG_CFG_NODE_ID] ? DataTable[REG_CFG_NODE_ID] : CAN_SLAVE_NID;
+	else
+		NodeID = CAN_SLAVE_NID;
+
+	DT_SaveFirmwareInfo(NodeID, 0);
+	CAN_Config(NodeID);
 
 	//Настройка ЦАПа
 	DAC1_Config();
@@ -122,12 +129,13 @@ void IO_Config(void)
 }
 //------------------------------------------------------------------------------
 
-void CAN_Config(void)
+void CAN_Config(Int16U NodeID)
 {
+	Int32U Mask = ((Int32U)NodeID) << CAN_SLAVE_NID_MPY;
 	RCC_CAN_Clk_EN(CAN_1_ClkEN);
 	NCAN_Init(SYSCLK, CAN_BAUDRATE, false);
 	NCAN_FIFOInterrupt(true);
-	NCAN_FilterInit(0, CAN_SLAVE_FILTER_ID, CAN_SLAVE_NID_MASK);
+	NCAN_FilterInit(0, Mask, Mask);
 	NCAN_FilterInit(1, CAN_MASTER_FILTER_ID, CAN_MASTER_NID_MASK);
 }
 

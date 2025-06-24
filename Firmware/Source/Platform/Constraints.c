@@ -21,7 +21,7 @@ const TableItemConstraint NVConstraint[DATA_TABLE_NV_SIZE] =
   {0, INT16U_MAX, REG_TOP_TRAP_I_DEFAULT},					// 9
   {0, INT16U_MAX, REG_FRONT_TRAP_P_DEFAULT},				// 10
   {0, INT16U_MAX, REG_FRONT_TRAP_I_DEFAULT},				// 11
-  {0, 0, 0},												// 12
+  {0, INT16U_MAX, 0},										// 12
   {0, 0, 0},												// 13
   {0, 0, 0},												// 14
   {0, 0, 0},												// 15
