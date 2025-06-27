@@ -171,6 +171,7 @@ void TrapezeWaveFormConfig_V20(float SurgeCurrent)
   float X,X2,SurgeCurrentCorrect,SC_Coef;
   uint16_t Counter=0;
   uint16_t CounterTemp=0;
+  Int32U BufferSizeActual = DataTable[REG_PULSE_DURATION] / TIMER15_uS_V20;
   
   //Проверяем на максимальное значение
   if(DataTable[REG_SC_PULSE_VALUE]>SC_TRAPEZE_MAX_VALUE_V20)
@@ -180,10 +181,16 @@ void TrapezeWaveFormConfig_V20(float SurgeCurrent)
     DataTable[REG_WARNING] = WARNING_SC_CUT_OFF;
   }
   //
-  
+  //Проверка размера буфера
+  if (BufferSizeActual > PULSE_BUFFER_SIZE_V20)
+  {
+	  SetDeviceState(DS_Fault);
+	  DataTable[REG_FAULT_REASON] = ERR_BUFFER_OVERFLOW;
+	  return;
+  }
   //Вычисляем количество точек фронта и самого импульса, в зависимости от заданного значения в мкС
-  EdgePointsCounter = (float)(DataTable[REG_TRAPEZE_EDGE_TIME]*PULSE_BUFFER_SIZE_V20)/PULSE_TIME_VALUE_V20;
-  PulsePointsCounter = (uint16_t)(PULSE_BUFFER_SIZE_V20-EdgePointsCounter*2);
+	EdgePointsCounter = (float) DataTable[REG_TRAPEZE_EDGE_TIME] / TIMER15_uS_V20;
+	PulsePointsCounter = (uint16_t) (BufferSizeActual - EdgePointsCounter * 2);
   //  
   
   if(DataTable[REG_TEST_REGULATOR]==MODE_TEST_REG_ON)
@@ -232,13 +239,13 @@ void TrapezeWaveFormConfig_V20(float SurgeCurrent)
   //
   
   //Формируем основной импульс трапеции
-  CounterTemp = Counter;
-  while(Counter<(PULSE_BUFFER_SIZE_V20-CounterTemp-1))
-  {
-    PulseDataBuffer_V20[Counter] = (uint16_t)(SurgeCurrent);
-    PulseDataSetUp_V20[Counter] = (uint16_t)(SurgeCurrentCorrect);
-    Counter++;
-  }
+	CounterTemp = Counter;
+	while (Counter < (BufferSizeActual - CounterTemp - 1))
+	{
+		PulseDataBuffer_V20[Counter] = (uint16_t) (SurgeCurrent);
+		PulseDataSetUp_V20[Counter] = (uint16_t) (SurgeCurrentCorrect);
+		Counter++;
+	}
   //
   
   //Формируем спадающий фронт трапеции
