@@ -159,14 +159,13 @@ void EXTI4_IRQHandler(void)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void USB_LP_CAN1_RX0_IRQHandler(void)
+void USB_LP_CAN_RX0_IRQHandler()
 {
- if (NCAN_RecieveCheck(CAN1))
-  {
-    NCAN_RecieveData();
-
-    NCAN_RecieveFlagReset(CAN1);
-  }
+	if (NCAN_RecieveCheck())
+	{
+		NCAN_RecieveData();
+		NCAN_RecieveFlagReset();
+	}
 }
 //------------------------------------------------------------------------------
 

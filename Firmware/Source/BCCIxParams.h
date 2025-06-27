@@ -10,7 +10,7 @@
 // Constants
 //
 
-#define CAN_FUNC_MASK				0xFFFFFC00
+#define CAN_FUNC_MASK				0x000003FF
 
 // Конфигурация Slave
 //

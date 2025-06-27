@@ -31,7 +31,7 @@
 #define TIMER7_uS                               1000
 
 //CAN
-#define CAN_BAUDRATE                            100000                          //Битрейт CAN
+#define CAN_BAUDRATE                            1000000                          //Битрейт CAN
 #define MAILBOXmax                              36                              //Количество MailBox
 #define MailBoxLen                              6                               //Длина MailBox
 

@@ -34,16 +34,6 @@ int main()
 	//UART configure
 	UART_Config();
 
-	// Инициализация функций связанных с CAN NodeID
-	Int16U NodeID = 0;
-	if(DataTable[REG_CFG_NODE_ID] == 0 || DataTable[REG_CFG_NODE_ID] == 65535)
-		NodeID = CAN_SLAVE_NID;
-	else
-		NodeID = DataTable[REG_CFG_NODE_ID];
-
-	DT_SaveFirmwareInfo(NodeID, 0);
-	CAN_Config(NodeID);
-
 	//Настройка ЦАПа
 	DAC1_Config();
 
@@ -128,16 +118,6 @@ void IO_Config(void)
 	SYNC_INT_Config();
 }
 //------------------------------------------------------------------------------
-
-void CAN_Config(Int16U NodeID)
-{
-	Int32U Mask = ((Int32U)NodeID) << CAN_SLAVE_NID_MPY;
-	RCC_CAN_Clk_EN(CAN_1_ClkEN);
-	NCAN_Init(SYSCLK, CAN_BAUDRATE, false);
-	NCAN_FIFOInterrupt(true);
-	NCAN_FilterInit(0, Mask, Mask);
-	NCAN_FilterInit(1, CAN_MASTER_FILTER_ID, CAN_MASTER_NID_MASK);
-}
 
 //-----------------------------Timer 7 config-----------------------------------
 void Timer7_Config(void)

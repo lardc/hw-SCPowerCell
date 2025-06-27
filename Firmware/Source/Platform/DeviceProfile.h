@@ -19,7 +19,7 @@ extern BCCIM_Interface MASTER_DEVICE_CAN_Interface;
 // Functions
 //
 // Initialize device profile engine
-void DEVPROFILE_Init(xCCI_FUNC_CallbackAction SpecializedDispatch, Boolean *MaskChanges);
+void DEVPROFILE_Init(xCCI_FUNC_CallbackAction SpecializedDispatch, Boolean *MaskChanges, Int16U NodeID);
 // Initialize endpoint service
 void DEVPROFILE_InitEPService(pInt16U Indexes, pInt16U Sizes, pInt16U *Counters, pInt16U *Datas);
 // Process user interface requests

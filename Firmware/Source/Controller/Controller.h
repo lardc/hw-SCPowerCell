@@ -40,6 +40,7 @@ void Delay_mS(uint64_t Delay);                                                  
 void IWDG_Control(void);                                                        //Контроль/сброс WatchDog
 void SetDeviceState(DeviceState NewState);                                      //Установка состояния блока
 bool CheckDeviceState(DeviceState NewState);                                    //Проверить состояние блока
+void CAN_Config(Int16U NodeID);
 //
 
 #endif // __CONTROLLER_H

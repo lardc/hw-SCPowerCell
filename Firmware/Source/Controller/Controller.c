@@ -49,10 +49,20 @@ void CONTROL_Init()
 	pInt16U EPCounters[EP_COUNT] = {(pInt16U)&CONTROL_Values_Pulse_Counter};
 	pInt16U EPDatas_V11[EP_COUNT] = {CONTROL_Values_Pulse_V11};
 	pInt16U EPDatas_V20[EP_COUNT] = {CONTROL_Values_Pulse_V20};
-	// Сброс значений
-	DEVPROFILE_ResetControlSection();
+
+	// Инициализация функций связанных с CAN NodeID
+	Int16U NodeID = 0;
+	if(DataTable[REG_CFG_NODE_ID] == 0 || DataTable[REG_CFG_NODE_ID] == 65535)
+		NodeID = CAN_SLAVE_NID;
+	else
+		NodeID = DataTable[REG_CFG_NODE_ID];
+
+	DT_SaveFirmwareInfo(NodeID, 0);
+	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive, NodeID);
+	CAN_Config(NodeID);
+
 	// Инициализация device profile
-	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
+	//DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive, NodeID);
 	DEVPROFILE_InitEPService(EPIndexes, (CONTROL_Version == SCPC_VERSION_V20 ? EPSized_V20 : EPSized_V11), EPCounters,
 				(CONTROL_Version == SCPC_VERSION_V20 ? EPDatas_V20 : EPDatas_V11));
 	// Сброс значений
@@ -227,6 +237,19 @@ bool CheckDeviceState(DeviceState NewState)
 {
   if(DataTable[REG_DEV_STATE] == NewState) return 1;
   else return 0;
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void CAN_Config(Int16U NodeID)
+{
+	Int32U Mask = ((Int32U)NodeID) << CAN_SLAVE_NID_MPY;
+
+	RCC_CAN_Clk_EN(CAN_1_ClkEN);
+	NCAN_Init(SYSCLK, CAN_BAUDRATE, FALSE);
+	NCAN_FIFOInterrupt(TRUE);
+	NCAN_FilterInit(0, Mask, Mask);
+	NCAN_InterruptSetPriority(0);
 }
 //------------------------------------------------------------------------------
 // No more.
