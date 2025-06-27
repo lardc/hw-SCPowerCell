@@ -62,7 +62,6 @@ void CONTROL_Init()
 	CAN_Config(NodeID);
 
 	// Инициализация device profile
-	//DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive, NodeID);
 	DEVPROFILE_InitEPService(EPIndexes, (CONTROL_Version == SCPC_VERSION_V20 ? EPSized_V20 : EPSized_V11), EPCounters,
 				(CONTROL_Version == SCPC_VERSION_V20 ? EPDatas_V20 : EPDatas_V11));
 	// Сброс значений

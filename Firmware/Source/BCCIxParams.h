@@ -22,7 +22,7 @@
 //
 #define CAN_MASTER_NID				0				// Node ID устройства
 #define CAN_MASTER_NID_MASK			0x03FC0000		// Маска Master node ID
-#define CAN_MASTER_NID_MPY			10				// Смещение адреса Master
+#define CAN_MASTER_NID_MPY			18				// Смещение адреса Master
 
 // CAN фильтр
 //
