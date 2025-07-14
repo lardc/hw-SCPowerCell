@@ -45,7 +45,7 @@
 #define SC_SINE_MAX_VALUE				3100									//Максимальное значение ударного тока при полусинусоидальной форме, Амперы
 #define TRAPEZE_EDGE_TIME_MIN			100										//Минимальное фремя фронта трапеции, мкС
 #define TRAPEZE_EDGE_TIME_MAX			1000									//Максимальное фремя фронта трапеции, мкС
-#define BATTERY_THRESHOLD_MAX			90										//Максимальный порог заряда конденсаторов, Вольт
+#define BATTERY_THRESHOLD_MAX			900										//Максимальный порог заряда конденсаторов, Вольт
 #define PULSE_OFFSET_MAX				2500									//Максимальное значение смещения сигнала импульса (с ЦАПа)
 #define REGULATOR_OFFSET_MAX			4095									//Максимальное значение смещения регулятора
 #define SYNC_LINE_HIGHSTATE_TIMEOUT		150										//Таймаут пребывания линии синхронизации в высоком состоянии
