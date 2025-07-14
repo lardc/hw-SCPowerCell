@@ -69,6 +69,8 @@ void CONTROL_Init()
 
 	RegulatorOut_SetLow();
 
+	//Выставление версии в регистре
+	DataTable[REG_SCPC_VERSION] = CONTROL_Version;
 	IWDG_Control();
 }
 // ----------------------------------------
