@@ -135,7 +135,7 @@ void EXTI4_IRQHandler(void)
 			//
 			SyncLine_TimeOutCounter = CONTROL_TimeCounter; //Запуск таймера таймаута импульса синхронизации (SYNC)
 			//
-			DELAY_MS(AMPLIFIRE_UNLOCK_TIME);
+			DELAY_MS(DataTable[REG_PRE_PULSE_PAUSE]);
 			//
 			if(CONTROL_Version == SCPC_VERSION_V20)
 			{

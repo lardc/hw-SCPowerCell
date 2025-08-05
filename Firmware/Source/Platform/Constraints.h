@@ -15,6 +15,13 @@
 
 #define PULSE_COUNT_MIN					1
 #define PULSE_COUNT_MAX					3
+#define PULSE_COUNT_DEF					PULSE_COUNT_MIN
+
+#define PRE_PULSE_PAUSE_MIN				9
+// Максимальная длительность паузы и импульса — 20мс
+#define PRE_PULSE_PAUSE_MAX				(PRE_PULSE_PAUSE_MIN + 2 * (PULSE_COUNT_MAX - 1) * 20)
+#define PRE_PULSE_PAUSE_DEF				PRE_PULSE_PAUSE_MIN
+
 // Types
 //
 typedef struct __TableItemConstraint
