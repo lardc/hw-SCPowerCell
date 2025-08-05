@@ -28,7 +28,7 @@ typedef void (*FUNC_AsyncDelegate)();
 // Variables
 //
 volatile Int64U CONTROL_TimeCounter = 0;
-static Boolean CycleActive = FALSE;
+static Boolean CycleActive = FALSE, ReInitCAN = false;
 Int16U CONTROL_Values_Pulse_V20[VALUES_x_SIZE_V20];
 Int16U CONTROL_Values_Pulse_V11[VALUES_x_SIZE_V11];
 Int16U CONTROL_Values_Pulse_Counter = 0;
@@ -36,7 +36,7 @@ Int16U CONTROL_Version = 0;
 //
 //Forward fucntions
 static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError);
-
+void CONTROL_InitCAN();
 
 // Functions
 //
@@ -50,16 +50,7 @@ void CONTROL_Init()
 	pInt16U EPDatas_V11[EP_COUNT] = {CONTROL_Values_Pulse_V11};
 	pInt16U EPDatas_V20[EP_COUNT] = {CONTROL_Values_Pulse_V20};
 
-	// Инициализация функций связанных с CAN NodeID
-	Int16U NodeID = 0;
-	if(DataTable[REG_CFG_NODE_ID] == 0 || DataTable[REG_CFG_NODE_ID] == 65535)
-		NodeID = CAN_SLAVE_NID;
-	else
-		NodeID = DataTable[REG_CFG_NODE_ID];
-
-	DT_SaveFirmwareInfo(NodeID, 0);
-	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive, NodeID);
-	CAN_Config(NodeID);
+	CONTROL_InitCAN();
 
 	// Инициализация device profile
 	DEVPROFILE_InitEPService(EPIndexes, (CONTROL_Version == SCPC_VERSION_V20 ? EPSized_V20 : EPSized_V11), EPCounters,
@@ -156,25 +147,52 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
         }
         break;
       }
-    }
-    return TRUE;
+
+		case ACT_REINIT_CAN:
+			ReInitCAN = true;
+			break;
+
+		default:
+			return false;
+	}
+
+	return true;
 }
 // ----------------------------------------
 
 void CONTROL_Idle()
 {
 #ifdef DEBUG_MODE
-  DebugModeInit();
-  SurgeCurrentStart_DebugMode();
+	DebugModeInit();
+	SurgeCurrentStart_DebugMode();
 #endif
-    
-    BatChargeProcess();
-    
-    DEVPROFILE_ProcessRequests();
-    
-    IWDG_Control();
+
+	if(ReInitCAN)
+	{
+		ReInitCAN = false;
+		CONTROL_InitCAN();
+	}
+
+	BatChargeProcess();
+	DEVPROFILE_ProcessRequests();
+	IWDG_Control();
 }
-// ---------------------------------------  
+// ---------------------------------------
+
+void CONTROL_InitCAN()
+{
+	// Инициализация функций связанных с CAN NodeID
+	Int16U NodeID = 0;
+	if(DataTable[REG_CFG_NODE_ID] == 0 || DataTable[REG_CFG_NODE_ID] == 65535)
+		NodeID = CAN_SLAVE_NID;
+	else
+		NodeID = DataTable[REG_CFG_NODE_ID];
+
+	DT_SaveFirmwareInfo(NodeID, 0);
+	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive, NodeID);
+	CAN_Config(NodeID);
+}
+// ----------------------------------------
 
 //------------------------------------------------------------------------------
 void DebugModeInit(void)

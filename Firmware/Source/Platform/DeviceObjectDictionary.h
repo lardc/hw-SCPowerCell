@@ -12,6 +12,8 @@
 #define ACT_FAULT_CLEAR                         3                               //Очистка fault
 #define ACT_WARNING_CLEAR                       4                               //Очистка warning
 #define ACT_RESET_DEVICE                        5                               //Перезапуск процессора
+//
+#define ACT_REINIT_CAN							10								// Переинициализация адреса CAN
 //-----------
 #define ACT_SC_PULSE_CONFIG                     100                             //Команда блоку SCPowerCell на конфигурацию значения ударного тока
 #define ACT_SC_PULSE_START                      101                             //Запуск формирования импульса ударного тока
